@@ -1,15 +1,15 @@
-import os
 from typing import Optional
 
 import httpx
 from fastapi import APIRouter, HTTPException, Query
 
+from config import BASE_URL, get_api_key
+
 router = APIRouter(tags=["matches"])
-BASE_URL = "https://v3.football.api-sports.io"
 
 
 async def fetch_football_data(endpoint: str, params: Optional[dict] = None):
-    api_key = os.getenv("FOOTBALL_API_KEY")
+    api_key = get_api_key()
     if not api_key:
         raise HTTPException(status_code=500, detail="FOOTBALL_API_KEY is not set")
 
@@ -36,8 +36,14 @@ async def get_matches(
     params = {}
     if league is not None:
         params["league"] = league
+    else:
+        params["league"] = 39
+
     if season is not None:
         params["season"] = season
+    else:
+        params["season"] = 2024
+
     if team is not None:
         params["team"] = team
     if date:

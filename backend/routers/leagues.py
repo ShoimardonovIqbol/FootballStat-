@@ -1,22 +1,11 @@
-import os
 import httpx
 from fastapi import APIRouter, HTTPException, Query
 from typing import Optional
 
-router = APIRouter(tags=["leagues"])
-BASE_URL = "https://v3.football.api-sports.io"
+from config import BASE_URL, get_api_key
 
-def get_api_key():
-    key = os.getenv("FOOTBALL_API_KEY")
-    if not key:
-        with open(".env") as f:
-            for line in f:
-                line = line.strip()
-                if line and "=" in line:
-                    k, v = line.split("=", 1)
-                    os.environ[k.strip()] = v.strip()
-        key = os.getenv("FOOTBALL_API_KEY")
-    return key
+router = APIRouter(tags=["leagues"])
+
 
 async def fetch_football_data(endpoint: str, params: Optional[dict] = None):
     api_key = get_api_key()
@@ -30,4 +19,24 @@ async def fetch_football_data(endpoint: str, params: Optional[dict] = None):
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail="Football API request failed")
 
-    return response.json()
+    try:
+        return response.json()
+    except ValueError as exc:
+        raise HTTPException(status_code=500, detail="Invalid JSON response from Football API") from exc
+
+
+@router.get("")
+async def get_leagues(
+    country: Optional[str] = Query(None, description="Country name"),
+    name: Optional[str] = Query(None, description="League name"),
+    season: Optional[int] = Query(None, description="Season year"),
+):
+    params = {}
+    if country:
+        params["country"] = country
+    if name:
+        params["name"] = name
+    if season is not None:
+        params["season"] = season
+
+    return await fetch_football_data("leagues", params)

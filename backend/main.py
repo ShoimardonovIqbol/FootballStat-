@@ -2,17 +2,11 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from config import get_api_key
 from routers.leagues import router as leagues_router
 from routers.matches import router as matches_router
 from routers.teams import router as teams_router
 from routers.players import router as players_router
-
-with open(".env") as f:
-    for line in f:
-        line = line.strip()
-        if line and "=" in line:
-            key, value = line.split("=", 1)
-            os.environ[key.strip()] = value.strip()
 
 app = FastAPI(
     title="Football Statistics API",
@@ -38,5 +32,5 @@ async def root():
     return {
         "message": "Football statistics API is running",
         "docs": "/docs",
-        "api_key_configured": bool(os.getenv("FOOTBALL_API_KEY")),
+        "api_key_configured": bool(get_api_key()),
     }
