@@ -1,42 +1,70 @@
-import httpx
-from fastapi import APIRouter, HTTPException, Query
 from typing import Optional
 
-from config import BASE_URL, get_api_key
+from fastapi import APIRouter, HTTPException, Path, Query
 
-router = APIRouter(tags=["leagues"])
+from config import IMPORTANT_LEAGUES
+from http_client import football_api
 
-
-async def fetch_football_data(endpoint: str, params: Optional[dict] = None):
-    api_key = get_api_key()
-    if not api_key:
-        raise HTTPException(status_code=500, detail="FOOTBALL_API_KEY is not set")
-
-    headers = {"x-apisports-key": api_key}
-    async with httpx.AsyncClient(timeout=15.0) as client:
-        response = await client.get(f"{BASE_URL}/{endpoint}", headers=headers, params=params or {})
-
-    if response.status_code != 200:
-        raise HTTPException(status_code=response.status_code, detail="Football API request failed")
-
-    try:
-        return response.json()
-    except ValueError as exc:
-        raise HTTPException(status_code=500, detail="Invalid JSON response from Football API") from exc
+router = APIRouter(tags=["Leagues"])
 
 
-@router.get("")
-async def get_leagues(
-    country: Optional[str] = Query(None, description="Country name"),
-    name: Optional[str] = Query(None, description="League name"),
-    season: Optional[int] = Query(None, description="Season year"),
+@router.get("", summary="Get all major leagues")
+async def get_leagues():
+    """Returns the curated list of major world leagues with logo and country info."""
+    data = await football_api("leagues", ttl=3600)
+    filtered = [
+        {
+            "id": item["league"]["id"],
+            "name": item["league"]["name"],
+            "logo": item["league"]["logo"],
+            "type": item["league"]["type"],
+            "country": item["country"]["name"],
+            "flag": item["country"]["flag"],
+        }
+        for item in data.get("response", [])
+        if item["league"]["id"] in IMPORTANT_LEAGUES
+    ]
+    return {"results": len(filtered), "response": filtered}
+
+
+@router.get("/all", summary="Browse all leagues with optional filters")
+async def get_all_leagues(
+    country: Optional[str] = Query(None, description="Filter by country name"),
+    type: Optional[str] = Query(None, description="'league' or 'cup'"),
+    search: Optional[str] = Query(None, description="Search by league name"),
 ):
-    params = {}
+    params: dict = {}
     if country:
         params["country"] = country
-    if name:
-        params["name"] = name
-    if season is not None:
-        params["season"] = season
+    if type:
+        params["type"] = type
+    if search:
+        params["search"] = search
+    return await football_api("leagues", params=params, ttl=3600)
 
-    return await fetch_football_data("leagues", params)
+
+@router.get("/{league_id}", summary="Get a single league's full details")
+async def get_league(
+    league_id: int = Path(description="League ID"),
+    season: Optional[int] = Query(None, description="Season year (e.g. 2024)"),
+):
+    params: dict = {"id": league_id}
+    if season:
+        params["season"] = season
+    data = await football_api("leagues", params=params, ttl=3600)
+    if not data.get("response"):
+        raise HTTPException(status_code=404, detail="League not found")
+    return data["response"][0]
+
+
+@router.get("/{league_id}/seasons", summary="Get all seasons for a league")
+async def get_league_seasons(league_id: int = Path(description="League ID")):
+    data = await football_api("leagues", params={"id": league_id}, ttl=3600)
+    if not data.get("response"):
+        raise HTTPException(status_code=404, detail="League not found")
+    league_data = data["response"][0]
+    return {
+        "league_id": league_id,
+        "name": league_data["league"]["name"],
+        "seasons": league_data.get("seasons", []),
+    }
