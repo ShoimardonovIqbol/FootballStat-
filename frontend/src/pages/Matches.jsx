@@ -38,32 +38,46 @@ export default function Matches() {
     <div>
       <Topbar title="Matches" />
 
-      <div className="px-8 py-6">
+      <div style={{ padding: '24px 32px' }}>
         {/* Tabs */}
-        <div className="flex gap-2 mb-6">
+        <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
           {TABS.map(({ key, label, icon: Icon }) => (
             <button
               key={key}
               onClick={() => setTab(key)}
-              className="relative px-5 py-2.5 rounded-xl text-sm font-semibold transition-all"
               style={{
+                position: 'relative',
+                padding: '9px 20px',
+                borderRadius: 12,
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: 'pointer',
                 color: tab === key ? '#fff' : '#64748b',
-                background: tab === key ? undefined : 'rgba(21,21,58,0.6)',
+                background: tab === key
+                  ? 'linear-gradient(135deg,#7c3aed,#4f46e5)'
+                  : 'rgba(21,21,58,0.6)',
                 border: '1px solid ' + (tab === key ? 'transparent' : 'rgba(124,58,237,0.15)'),
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                transition: 'all 0.2s',
+                outline: 'none',
               }}
             >
-              {tab === key && (
-                <motion.div layoutId="tab-bg" className="absolute inset-0 rounded-xl gradient-purple" />
+              <Icon size={14} />
+              {label}
+              {key === 'Live' && live.data && (
+                <span style={{
+                  fontSize: 11,
+                  background: 'rgba(34,212,122,0.15)',
+                  color: '#22d47a',
+                  padding: '2px 6px',
+                  borderRadius: 999,
+                  fontWeight: 700,
+                }}>
+                  {live.data.results}
+                </span>
               )}
-              <span className="relative z-10 flex items-center gap-2">
-                <Icon size={14} />
-                {label}
-                {key === 'Live' && live.data && (
-                  <span className="text-xs bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded-full">
-                    {live.data.results}
-                  </span>
-                )}
-              </span>
             </button>
           ))}
         </div>
@@ -76,35 +90,71 @@ export default function Matches() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.25 }}
-            className="space-y-6"
+            style={{ display: 'flex', flexDirection: 'column', gap: 20 }}
           >
             {source.loading
               ? [0,1,2].map(i => (
-                <div key={i} className="glass p-4 space-y-3">
+                <div key={i} style={{
+                  background: 'rgba(16,16,42,0.7)',
+                  border: '1px solid rgba(124,58,237,0.12)',
+                  borderRadius: 16,
+                  padding: 16,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 10,
+                }}>
                   {[0,1,2].map(j => <MatchCardSkeleton key={j} />)}
                 </div>
               ))
               : grouped.length === 0
               ? (
-                <div className="glass p-16 text-center">
-                  <CalendarDays size={40} className="mx-auto mb-4 text-slate-600" />
-                  <p className="text-slate-400 font-medium">No matches found</p>
+                <div style={{
+                  background: 'rgba(16,16,42,0.7)',
+                  border: '1px solid rgba(124,58,237,0.12)',
+                  borderRadius: 16,
+                  padding: '64px 0',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 12,
+                }}>
+                  <CalendarDays size={40} style={{ color: '#334155' }} />
+                  <p style={{ color: '#64748b', fontWeight: 500 }}>No matches found</p>
                 </div>
               )
               : grouped.map(({ league, fixtures }) => (
-                <div key={league.id} className="glass p-4">
-                  <div className="flex items-center gap-2.5 mb-4 pb-3"
-                    style={{ borderBottom: '1px solid rgba(124,58,237,0.12)' }}>
-                    <img src={league.logo || league.flag} alt="" className="w-6 h-6 object-contain" />
+                <div key={league.id} style={{
+                  background: 'rgba(16,16,42,0.7)',
+                  border: '1px solid rgba(124,58,237,0.12)',
+                  borderRadius: 16,
+                  padding: 16,
+                  overflow: 'hidden',
+                }}>
+                  {/* League header */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 10,
+                    marginBottom: 14,
+                    paddingBottom: 12,
+                    borderBottom: '1px solid rgba(124,58,237,0.12)',
+                  }}>
+                    <img src={league.logo || league.flag} alt="" style={{ width: 24, height: 24, objectFit: 'contain' }} />
                     <div>
-                      <p className="text-sm font-bold text-white">{league.name}</p>
-                      <p className="text-xs text-slate-500">{league.country} · {league.round}</p>
+                      <p style={{ fontSize: 13, fontWeight: 700, color: '#f1f5f9' }}>{league.name}</p>
+                      <p style={{ fontSize: 11, color: '#64748b', marginTop: 1 }}>{league.country} · {league.round}</p>
                     </div>
-                    <span className="ml-auto text-xs text-purple-400 font-medium">
+                    <span style={{
+                      marginLeft: 'auto',
+                      fontSize: 11,
+                      color: '#a78bfa',
+                      fontWeight: 600,
+                    }}>
                       {fixtures.length} matches
                     </span>
                   </div>
-                  <div className="space-y-2">
+                  {/* Fixtures */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {fixtures.map((m, i) => (
                       <MatchCard key={m.fixture.id} fixture={m} index={i} />
                     ))}

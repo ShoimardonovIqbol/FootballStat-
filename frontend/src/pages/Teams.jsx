@@ -24,9 +24,9 @@ export default function Teams() {
     <div>
       <Topbar title="Teams" />
 
-      <div className="px-8 py-6">
+      <div style={{ padding: '24px 32px' }}>
         {/* League filter */}
-        <div className="flex gap-2 flex-wrap mb-6">
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 24 }}>
           {LEAGUES.map(l => (
             <button
               key={l.id}
@@ -47,7 +47,7 @@ export default function Teams() {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
           {loading
             ? Array.from({ length: 12 }).map((_, i) => (
               <div key={i} className="glass p-5 flex flex-col items-center gap-3">

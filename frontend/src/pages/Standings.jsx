@@ -40,9 +40,9 @@ export default function Standings() {
     <div>
       <Topbar title="Standings" />
 
-      <div className="px-8 py-6">
+      <div style={{ padding: '24px 32px' }}>
         {/* League picker */}
-        <div className="flex gap-2 flex-wrap mb-6">
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 24 }}>
           {LEAGUES.map(l => (
             <button
               key={l.id}

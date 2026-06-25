@@ -43,9 +43,9 @@ export default function App() {
       <div className="orb w-80 h-80" style={{ background:'#4f46e5', top:'55%', right:'10%', animationDelay:'4s'  }} />
       <div className="orb w-64 h-64" style={{ background:'#a855f7', top:'35%', left:'48%', animationDelay:'8s'  }} />
 
-      <div className="flex min-h-screen">
+      <div style={{ display: 'flex', minHeight: '100vh' }}>
         <Sidebar />
-        <main className="flex-1 ml-64 min-h-screen">
+        <main style={{ flex: 1, marginLeft: 256, minHeight: '100vh', position: 'relative' }}>
           <AppRoutes />
         </main>
       </div>

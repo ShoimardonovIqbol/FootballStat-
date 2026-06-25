@@ -22,26 +22,41 @@ export default function Topbar({ title }) {
 
   return (
     <header
-      className="flex items-center justify-between px-8 py-4 sticky top-0 z-40"
       style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '14px 32px',
+        position: 'sticky',
+        top: 0,
+        zIndex: 40,
         background: 'rgba(8,8,23,0.85)',
         backdropFilter: 'blur(20px)',
         borderBottom: '1px solid rgba(124,58,237,0.12)',
       }}
     >
-      <h1 className="text-lg font-bold text-white">{title}</h1>
+      <h1 style={{ fontSize: 18, fontWeight: 700, color: '#fff', margin: 0 }}>{title}</h1>
 
       {/* Search */}
-      <div className="relative w-72">
-        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+      <div style={{ position: 'relative', width: 288 }}>
+        <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
         <input
           value={q}
           onChange={e => handleSearch(e.target.value)}
           onBlur={() => setTimeout(() => setOpen(false), 200)}
           onFocus={() => { if (results) setOpen(true) }}
           placeholder="Search teams, players…"
-          className="w-full pl-9 pr-4 py-2.5 rounded-xl text-sm text-slate-200 outline-none transition-all"
           style={{
+            width: '100%',
+            paddingLeft: 36,
+            paddingRight: 16,
+            paddingTop: 9,
+            paddingBottom: 9,
+            borderRadius: 12,
+            fontSize: 13,
+            color: '#e2e8f0',
+            outline: 'none',
+            boxSizing: 'border-box',
             background: 'rgba(21,21,58,0.8)',
             border: '1px solid rgba(124,58,237,0.2)',
           }}
@@ -53,8 +68,14 @@ export default function Topbar({ title }) {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 8 }}
-              className="absolute top-full mt-2 w-full rounded-xl overflow-hidden z-50"
               style={{
+                position: 'absolute',
+                top: '100%',
+                marginTop: 8,
+                width: '100%',
+                borderRadius: 12,
+                overflow: 'hidden',
+                zIndex: 50,
                 background: '#10102a',
                 border: '1px solid rgba(124,58,237,0.3)',
                 boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
@@ -64,15 +85,28 @@ export default function Topbar({ title }) {
                 <button
                   key={t.team.id}
                   onMouseDown={() => { navigate(`/teams/${t.team.id}`); setOpen(false); setQ('') }}
-                  className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-white/5 transition text-left"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    width: '100%',
+                    padding: '10px 16px',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'background 0.15s',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
-                  <img src={t.team.logo} alt="" className="w-6 h-6 object-contain" />
-                  <span className="text-sm text-slate-200">{t.team.name}</span>
-                  <span className="ml-auto text-xs text-slate-500">{t.team.country}</span>
+                  <img src={t.team.logo} alt="" style={{ width: 24, height: 24, objectFit: 'contain' }} />
+                  <span style={{ fontSize: 13, color: '#e2e8f0' }}>{t.team.name}</span>
+                  <span style={{ marginLeft: 'auto', fontSize: 11, color: '#64748b' }}>{t.team.country}</span>
                 </button>
               ))}
               {results.teams?.response?.length === 0 && (
-                <p className="px-4 py-3 text-sm text-slate-500">No results for "{q}"</p>
+                <p style={{ padding: '12px 16px', fontSize: 13, color: '#64748b' }}>No results for "{q}"</p>
               )}
             </motion.div>
           )}
@@ -80,9 +114,9 @@ export default function Topbar({ title }) {
       </div>
 
       {/* Live indicator */}
-      <div className="flex items-center gap-2">
-        <Radio size={14} className="text-green-400" />
-        <span className="text-xs text-green-400 font-semibold">LIVE</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <Radio size={14} style={{ color: '#22d47a' }} />
+        <span style={{ fontSize: 12, color: '#22d47a', fontWeight: 700 }}>LIVE</span>
       </div>
     </header>
   )
