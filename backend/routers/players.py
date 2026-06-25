@@ -1,49 +1,113 @@
 from typing import Optional
 
-import httpx
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Path, Query
 
-from config import BASE_URL, get_api_key
+from config import DEFAULT_SEASON
+from http_client import football_api
 
-router = APIRouter(tags=["players"])
-
-
-async def fetch_football_data(endpoint: str, params: Optional[dict] = None):
-    api_key = get_api_key()
-    if not api_key:
-        raise HTTPException(status_code=500, detail="FOOTBALL_API_KEY is not set")
-
-    headers = {"x-apisports-key": api_key}
-    async with httpx.AsyncClient(timeout=15.0) as client:
-        response = await client.get(f"{BASE_URL}/{endpoint}", headers=headers, params=params or {})
-
-    if response.status_code != 200:
-        raise HTTPException(status_code=response.status_code, detail="Football API request failed")
-
-    try:
-        return response.json()
-    except ValueError as exc:
-        raise HTTPException(status_code=500, detail="Invalid JSON response from Football API") from exc
+router = APIRouter(tags=["Players"])
 
 
-@router.get("")
+@router.get("", summary="List players with optional filters")
 async def get_players(
     league: Optional[int] = Query(None, description="League ID"),
     season: Optional[int] = Query(None, description="Season year"),
     team: Optional[int] = Query(None, description="Team ID"),
+    search: Optional[str] = Query(None, description="Search by player name (min 3 chars)"),
+    page: int = Query(1, ge=1, description="Page number (20 players per page)"),
 ):
-    params = {}
-    if league is not None:
-        params["league"] = league
+    params: dict = {"page": page}
+    if search:
+        params["search"] = search
     else:
-        params["league"] = 39
+        params["league"] = league or 39
+        params["season"] = season or DEFAULT_SEASON
+        if team:
+            params["team"] = team
+    return await football_api("players", params=params, ttl=3600)
 
-    if season is not None:
-        params["season"] = season
-    else:
-        params["season"] = 2024
 
-    if team is not None:
-        params["team"] = team
+@router.get("/top-scorers", summary="Top goal scorers in a league")
+async def get_top_scorers(
+    league: int = Query(39, description="League ID"),
+    season: int = Query(DEFAULT_SEASON, description="Season year"),
+):
+    return await football_api(
+        "players/topscorers",
+        params={"league": league, "season": season},
+        ttl=600,
+    )
 
-    return await fetch_football_data("players", params)
+
+@router.get("/top-assists", summary="Top assist providers in a league")
+async def get_top_assists(
+    league: int = Query(39, description="League ID"),
+    season: int = Query(DEFAULT_SEASON, description="Season year"),
+):
+    return await football_api(
+        "players/topassists",
+        params={"league": league, "season": season},
+        ttl=600,
+    )
+
+
+@router.get("/top-yellow-cards", summary="Players with most yellow cards")
+async def get_top_yellow_cards(
+    league: int = Query(39, description="League ID"),
+    season: int = Query(DEFAULT_SEASON, description="Season year"),
+):
+    return await football_api(
+        "players/topyellowcards",
+        params={"league": league, "season": season},
+        ttl=600,
+    )
+
+
+@router.get("/top-red-cards", summary="Players with most red cards")
+async def get_top_red_cards(
+    league: int = Query(39, description="League ID"),
+    season: int = Query(DEFAULT_SEASON, description="Season year"),
+):
+    return await football_api(
+        "players/topredcards",
+        params={"league": league, "season": season},
+        ttl=600,
+    )
+
+
+@router.get("/sidelined", summary="Players sidelined by injury or suspension")
+async def get_sidelined(
+    player: Optional[int] = Query(None, description="Player ID"),
+    coach: Optional[int] = Query(None, description="Coach ID"),
+):
+    params: dict = {}
+    if player:
+        params["player"] = player
+    elif coach:
+        params["coach"] = coach
+    return await football_api("sidelined", params=params, ttl=600)
+
+
+@router.get("/{player_id}", summary="Full player profile with season statistics")
+async def get_player(
+    player_id: int = Path(description="Player ID"),
+    season: int = Query(DEFAULT_SEASON, description="Season year"),
+):
+    data = await football_api(
+        "players",
+        params={"id": player_id, "season": season},
+        ttl=3600,
+    )
+    if not data.get("response"):
+        raise HTTPException(status_code=404, detail="Player not found")
+    return data["response"][0]
+
+
+@router.get("/{player_id}/transfers", summary="Transfer history of a player")
+async def get_player_transfers(player_id: int = Path(description="Player ID")):
+    return await football_api("transfers", params={"player": player_id}, ttl=86400)
+
+
+@router.get("/{player_id}/trophies", summary="Trophies won by a player")
+async def get_player_trophies(player_id: int = Path(description="Player ID")):
+    return await football_api("trophies", params={"player": player_id}, ttl=86400)
