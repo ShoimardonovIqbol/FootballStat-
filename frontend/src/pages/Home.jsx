@@ -94,17 +94,17 @@ export default function Home() {
       <div className="px-6 pt-5 pb-8 space-y-6">
 
         {/* Hero stats row */}
-        <div className="grid grid-cols-3 gap-4">
-          <StatCard label="Live Right Now"   value={live?.results}         icon={Radio}        color="#22d47a" delay={0}    loading={loading} />
-          <StatCard label="Today's Matches"  value={today?.total}          icon={CalendarDays} color="#a78bfa" delay={0.08} loading={loading} />
-          <StatCard label="Leagues Active"   value={today?.leagues?.length} icon={Layers}      color="#f59e0b" delay={0.16} loading={loading} />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+          <StatCard label="Live Right Now"    value={live?.results}          icon={Radio}        color="#22d47a" delay={0}    loading={loading} />
+          <StatCard label="Today's Matches"   value={today?.total}           icon={CalendarDays} color="#a78bfa" delay={0.08} loading={loading} />
+          <StatCard label="Active Leagues"    value={today?.leagues?.length} icon={Layers}       color="#f59e0b" delay={0.16} loading={loading} />
         </div>
 
         {/* Two-column layout */}
-        <div className="grid grid-cols-5 gap-5">
+        <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 20 }}>
 
-          {/* ── Left col (3/5) ── */}
-          <div className="col-span-3 space-y-5">
+          {/* ── Left col ── */}
+          <div className="space-y-5">
 
             {/* Live matches */}
             {(loading || liveMatches.length > 0) && (
@@ -169,8 +169,8 @@ export default function Home() {
             </section>
           </div>
 
-          {/* ── Right col (2/5) ── */}
-          <div className="col-span-2 space-y-5">
+          {/* ── Right col ── */}
+          <div className="space-y-5">
 
             {/* Top Scorers */}
             <section>
