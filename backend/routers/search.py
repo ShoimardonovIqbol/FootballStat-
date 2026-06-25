@@ -1,4 +1,5 @@
 import asyncio
+from typing import Optional
 
 from fastapi import APIRouter, Query
 
@@ -10,12 +11,28 @@ router = APIRouter(tags=["Search"])
 @router.get("", summary="Search teams and players by name")
 async def search(
     q: str = Query(min_length=3, description="Search query — minimum 3 characters"),
+    league: Optional[int] = Query(None, description="League ID — required for player search"),
 ):
-    """Parallel search across teams and players, returns combined results."""
-    teams_data, players_data = await asyncio.gather(
-        football_api("teams", params={"search": q}, ttl=3600),
-        football_api("players", params={"search": q}, ttl=3600),
-    )
+    """Searches teams by name always. Player search is included when league is provided
+    (API-Football requires league or team alongside the player search field)."""
+    if league:
+        teams_data, players_data = await asyncio.gather(
+            football_api("teams", params={"search": q}, ttl=3600),
+            football_api("players", params={"search": q, "league": league}, ttl=3600),
+        )
+        return {
+            "query": q,
+            "teams": {
+                "results": teams_data.get("results", 0),
+                "response": teams_data.get("response", []),
+            },
+            "players": {
+                "results": players_data.get("results", 0),
+                "response": players_data.get("response", []),
+            },
+        }
+
+    teams_data = await football_api("teams", params={"search": q}, ttl=3600)
     return {
         "query": q,
         "teams": {
@@ -23,8 +40,9 @@ async def search(
             "response": teams_data.get("response", []),
         },
         "players": {
-            "results": players_data.get("results", 0),
-            "response": players_data.get("response", []),
+            "results": 0,
+            "note": "Add ?league=<id> to include player results",
+            "response": [],
         },
     }
 
