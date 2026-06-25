@@ -1,79 +1,100 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 
-const STATUS_LIVE = ['1H','2H','HT','ET','BT','P','INT']
-const STATUS_FT   = ['FT','AET','PEN']
+const STATUS_LIVE = ['1H', '2H', 'HT', 'ET', 'BT', 'P', 'INT']
+const STATUS_FT   = ['FT', 'AET', 'PEN']
 
 export default function MatchCard({ fixture, index = 0 }) {
-  const { fixture: f, teams, goals, league, score } = fixture
+  const { fixture: f, teams, goals, league } = fixture
   const isLive = STATUS_LIVE.includes(f.status.short)
   const isFT   = STATUS_FT.includes(f.status.short)
+  const isNS   = f.status.short === 'NS'
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05, duration: 0.35 }}
+      transition={{ delay: index * 0.045, duration: 0.3 }}
+      whileHover={{ scale: 1.01 }}
     >
       <Link to={`/matches/${f.id}`} className="block">
         <div
-          className="glass hover-card p-4 cursor-pointer"
-          style={{ borderRadius: 14 }}
+          className="hover-card rounded-xl px-4 py-3 cursor-pointer"
+          style={{
+            background: isLive
+              ? 'rgba(124,58,237,0.1)'
+              : 'rgba(16,16,42,0.6)',
+            border: '1px solid ' + (isLive
+              ? 'rgba(124,58,237,0.35)'
+              : 'rgba(124,58,237,0.1)'),
+          }}
         >
-          {/* League + Status */}
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              {league?.logo && (
-                <img src={league.logo} alt="" className="w-4 h-4 object-contain" />
-              )}
-              <span className="text-xs text-slate-500 truncate max-w-[120px]">
-                {league?.name}
-              </span>
-            </div>
-            {isLive ? (
-              <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full"
-                style={{ background: 'rgba(34,212,122,0.12)', border: '1px solid rgba(34,212,122,0.3)' }}>
-                <div className="live-dot w-1.5 h-1.5" />
-                <span className="text-xs text-green-400 font-bold">{f.status.elapsed}'</span>
-              </div>
-            ) : isFT ? (
-              <span className="text-xs text-slate-400 font-medium">FT</span>
-            ) : (
-              <span className="text-xs text-slate-500">
-                {new Date(f.date).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })}
-              </span>
-            )}
-          </div>
+          <div className="flex items-center gap-3">
 
-          {/* Teams + Score */}
-          <div className="flex items-center justify-between gap-3">
-            {/* Home */}
-            <div className="flex-1 flex items-center gap-2.5">
-              <img src={teams.home.logo} alt={teams.home.name}
-                className="w-8 h-8 object-contain" />
+            {/* Home team */}
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <img
+                src={teams.home.logo}
+                alt={teams.home.name}
+                className="w-7 h-7 object-contain shrink-0"
+                onError={e => { e.target.style.display = 'none' }}
+              />
               <span className="text-sm font-semibold text-white truncate">
                 {teams.home.name}
               </span>
             </div>
 
-            {/* Score */}
-            <div
-              className={`px-4 py-1.5 rounded-xl text-center min-w-[70px]
-                ${isLive ? 'gradient-purple glow-purple' : 'gradient-purple-soft'}`}
-            >
-              <span className="text-sm font-bold text-white tabular-nums">
-                {goals.home ?? '-'} : {goals.away ?? '-'}
-              </span>
+            {/* Score / Time */}
+            <div className="shrink-0">
+              {isNS ? (
+                <div
+                  className="px-3 py-1.5 rounded-lg text-center min-w-[64px]"
+                  style={{ background: 'rgba(100,116,139,0.15)', border: '1px solid rgba(100,116,139,0.2)' }}
+                >
+                  <span className="text-xs font-bold text-slate-400">
+                    {new Date(f.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+              ) : (
+                <div
+                  className="px-3 py-1.5 rounded-lg text-center min-w-[64px]"
+                  style={{
+                    background: isLive
+                      ? 'linear-gradient(135deg,#7c3aed,#4f46e5)'
+                      : 'rgba(124,58,237,0.18)',
+                    border: '1px solid ' + (isLive ? 'transparent' : 'rgba(124,58,237,0.3)'),
+                    boxShadow: isLive ? '0 0 18px rgba(124,58,237,0.4)' : 'none',
+                  }}
+                >
+                  <span className="text-sm font-bold text-white tabular-nums">
+                    {goals.home ?? 0} : {goals.away ?? 0}
+                  </span>
+                  {isLive && (
+                    <div className="flex items-center justify-center gap-1 mt-0.5">
+                      <div className="live-dot w-1 h-1" />
+                      <span className="text-xs text-green-300">{f.status.elapsed}'</span>
+                    </div>
+                  )}
+                  {isFT && (
+                    <p className="text-xs text-slate-400 mt-0.5">FT</p>
+                  )}
+                </div>
+              )}
             </div>
 
-            {/* Away */}
-            <div className="flex-1 flex items-center gap-2.5 justify-end">
+            {/* Away team */}
+            <div className="flex items-center gap-2 flex-1 min-w-0 justify-end">
               <span className="text-sm font-semibold text-white truncate text-right">
                 {teams.away.name}
               </span>
-              <img src={teams.away.logo} alt={teams.away.name}
-                className="w-8 h-8 object-contain" />
+              <img
+                src={teams.away.logo}
+                alt={teams.away.name}
+                className="w-7 h-7 object-contain shrink-0"
+                onError={e => { e.target.style.display = 'none' }}
+              />
             </div>
+
           </div>
         </div>
       </Link>
