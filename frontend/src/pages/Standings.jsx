@@ -1,18 +1,19 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import { Trophy } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { standingsAPI } from '../services/api'
 import { Skeleton } from '../components/ui/Skeleton'
 import Topbar from '../components/layout/Topbar'
 
 const LEAGUES = [
-  { id: 39,  name: 'Premier League', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
-  { id: 140, name: 'La Liga',        flag: '🇪🇸' },
-  { id: 135, name: 'Serie A',        flag: '🇮🇹' },
-  { id: 78,  name: 'Bundesliga',     flag: '🇩🇪' },
-  { id: 61,  name: 'Ligue 1',        flag: '🇫🇷' },
-  { id: 2,   name: 'UCL',            flag: '⭐' },
+  { id: 39,  name: 'Premier League' },
+  { id: 140, name: 'La Liga'        },
+  { id: 135, name: 'Serie A'        },
+  { id: 78,  name: 'Bundesliga'     },
+  { id: 61,  name: 'Ligue 1'        },
+  { id: 2,   name: 'UCL'            },
 ]
 
 const FORM_COLOR = { W: '#22d47a', D: '#f59e0b', L: '#f43f5e' }
@@ -32,7 +33,7 @@ export default function Standings() {
   const [leagueId, setLeagueId] = useState(39)
   const { data, loading } = useApi(() => standingsAPI.get(leagueId, 2024), [leagueId])
 
-  const table = data?.response?.[0]?.league?.standings?.[0] ?? []
+  const table      = data?.response?.[0]?.league?.standings?.[0] ?? []
   const leagueInfo = data?.response?.[0]?.league
 
   return (
@@ -46,7 +47,7 @@ export default function Standings() {
             <button
               key={l.id}
               onClick={() => setLeagueId(l.id)}
-              className="px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-2"
               style={{
                 background: leagueId === l.id
                   ? 'linear-gradient(135deg,#7c3aed,#4f46e5)'
@@ -55,12 +56,12 @@ export default function Standings() {
                 border: '1px solid ' + (leagueId === l.id ? 'transparent' : 'rgba(124,58,237,0.15)'),
               }}
             >
-              {l.flag} {l.name}
+              <Trophy size={13} />
+              {l.name}
             </button>
           ))}
         </div>
 
-        {/* Table header */}
         <div className="glass overflow-hidden">
           {leagueInfo && (
             <div className="flex items-center gap-3 px-5 py-4"
@@ -73,14 +74,15 @@ export default function Standings() {
             </div>
           )}
 
-          <div className="grid text-xs text-slate-500 font-medium px-5 py-3"
+          {/* Column headers */}
+          <div
+            className="grid text-xs text-slate-500 font-medium px-5 py-3"
             style={{
               gridTemplateColumns: '2rem 2.5rem 1fr 2rem 2rem 2rem 2rem 2rem 2rem 5rem 4rem',
               borderBottom: '1px solid rgba(124,58,237,0.1)',
-            }}>
-            <span>#</span>
-            <span></span>
-            <span>Club</span>
+            }}
+          >
+            <span>#</span><span /><span>Club</span>
             <span className="text-center">P</span>
             <span className="text-center">W</span>
             <span className="text-center">D</span>
@@ -118,7 +120,7 @@ export default function Standings() {
                   <img src={row.team.logo} alt="" className="w-7 h-7 object-contain hover:scale-110 transition" />
                 </Link>
                 <Link to={`/teams/${row.team.id}`}
-                  className="text-sm text-slate-200 hover:text-white hover:text-purple-300 transition truncate">
+                  className="text-sm text-slate-200 hover:text-purple-300 transition truncate">
                   {row.team.name}
                 </Link>
                 <span className="text-xs text-center text-slate-400">{row.all.played}</span>
@@ -126,8 +128,9 @@ export default function Standings() {
                 <span className="text-xs text-center text-yellow-400">{row.all.draw}</span>
                 <span className="text-xs text-center text-red-400">{row.all.lose}</span>
                 <span className="text-xs text-center text-slate-400">{row.all.goals.for}</span>
-                <span className={`text-xs text-center font-medium
-                  ${row.goalsDiff > 0 ? 'text-green-400' : row.goalsDiff < 0 ? 'text-red-400' : 'text-slate-400'}`}>
+                <span className={`text-xs text-center font-medium ${
+                  row.goalsDiff > 0 ? 'text-green-400' : row.goalsDiff < 0 ? 'text-red-400' : 'text-slate-400'
+                }`}>
                   {row.goalsDiff > 0 ? '+' : ''}{row.goalsDiff}
                 </span>
                 <div className="flex gap-0.5 justify-center">

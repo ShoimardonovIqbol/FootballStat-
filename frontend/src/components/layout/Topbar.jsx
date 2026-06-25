@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Search, Radio } from 'lucide-react'
 import { searchAPI } from '../../services/api'
 
 export default function Topbar({ title }) {
@@ -23,7 +24,7 @@ export default function Topbar({ title }) {
     <header
       className="flex items-center justify-between px-8 py-4 sticky top-0 z-40"
       style={{
-        background: 'rgba(8,8,23,0.8)',
+        background: 'rgba(8,8,23,0.85)',
         backdropFilter: 'blur(20px)',
         borderBottom: '1px solid rgba(124,58,237,0.12)',
       }}
@@ -32,22 +33,19 @@ export default function Topbar({ title }) {
 
       {/* Search */}
       <div className="relative w-72">
+        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
         <input
           value={q}
           onChange={e => handleSearch(e.target.value)}
           onBlur={() => setTimeout(() => setOpen(false), 200)}
+          onFocus={() => { if (results) setOpen(true) }}
           placeholder="Search teams, players…"
-          className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm text-slate-200 outline-none transition-all"
+          className="w-full pl-9 pr-4 py-2.5 rounded-xl text-sm text-slate-200 outline-none transition-all"
           style={{
             background: 'rgba(21,21,58,0.8)',
             border: '1px solid rgba(124,58,237,0.2)',
           }}
-          onFocus={e => {
-            e.target.style.borderColor = 'rgba(124,58,237,0.6)'
-            if (results) setOpen(true)
-          }}
         />
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">🔍</span>
 
         <AnimatePresence>
           {open && results && (
@@ -83,7 +81,7 @@ export default function Topbar({ title }) {
 
       {/* Live indicator */}
       <div className="flex items-center gap-2">
-        <div className="live-dot" />
+        <Radio size={14} className="text-green-400" />
         <span className="text-xs text-green-400 font-semibold">LIVE</span>
       </div>
     </header>

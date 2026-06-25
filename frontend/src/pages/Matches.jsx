@@ -1,19 +1,24 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Radio, CalendarDays, List } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { matchesAPI } from '../services/api'
 import MatchCard from '../components/ui/MatchCard'
 import { MatchCardSkeleton } from '../components/ui/Skeleton'
 import Topbar from '../components/layout/Topbar'
 
-const TABS = ['Today', 'Live', 'All']
+const TABS = [
+  { key: 'Today', label: 'Today',  icon: CalendarDays },
+  { key: 'Live',  label: 'Live',   icon: Radio        },
+  { key: 'All',   label: 'All',    icon: List         },
+]
 
 export default function Matches() {
   const [tab, setTab] = useState('Today')
 
-  const today   = useApi(() => matchesAPI.getToday(), [])
-  const live    = useApi(() => matchesAPI.getLive(), [])
-  const all     = useApi(() => matchesAPI.getList({ league: 39, season: 2024 }), [])
+  const today = useApi(() => matchesAPI.getToday(), [])
+  const live  = useApi(() => matchesAPI.getLive(), [])
+  const all   = useApi(() => matchesAPI.getList({ league: 39, season: 2024 }), [])
 
   const source = tab === 'Today' ? today : tab === 'Live' ? live : all
 
@@ -36,26 +41,24 @@ export default function Matches() {
       <div className="px-8 py-6">
         {/* Tabs */}
         <div className="flex gap-2 mb-6">
-          {TABS.map(t => (
+          {TABS.map(({ key, label, icon: Icon }) => (
             <button
-              key={t}
-              onClick={() => setTab(t)}
-              className="relative px-5 py-2 rounded-xl text-sm font-semibold transition-all"
+              key={key}
+              onClick={() => setTab(key)}
+              className="relative px-5 py-2.5 rounded-xl text-sm font-semibold transition-all"
               style={{
-                color: tab === t ? '#fff' : '#64748b',
-                background: tab === t ? undefined : 'rgba(21,21,58,0.6)',
+                color: tab === key ? '#fff' : '#64748b',
+                background: tab === key ? undefined : 'rgba(21,21,58,0.6)',
+                border: '1px solid ' + (tab === key ? 'transparent' : 'rgba(124,58,237,0.15)'),
               }}
             >
-              {tab === t && (
-                <motion.div
-                  layoutId="tab-bg"
-                  className="absolute inset-0 rounded-xl gradient-purple"
-                />
+              {tab === key && (
+                <motion.div layoutId="tab-bg" className="absolute inset-0 rounded-xl gradient-purple" />
               )}
               <span className="relative z-10 flex items-center gap-2">
-                {t === 'Live' && <div className="live-dot w-1.5 h-1.5" />}
-                {t}
-                {t === 'Live' && live.data && (
+                <Icon size={14} />
+                {label}
+                {key === 'Live' && live.data && (
                   <span className="text-xs bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded-full">
                     {live.data.results}
                   </span>
@@ -83,9 +86,9 @@ export default function Matches() {
               ))
               : grouped.length === 0
               ? (
-                <div className="glass p-12 text-center">
-                  <p className="text-4xl mb-3">⚽</p>
-                  <p className="text-slate-400">No matches found</p>
+                <div className="glass p-16 text-center">
+                  <CalendarDays size={40} className="mx-auto mb-4 text-slate-600" />
+                  <p className="text-slate-400 font-medium">No matches found</p>
                 </div>
               )
               : grouped.map(({ league, fixtures }) => (

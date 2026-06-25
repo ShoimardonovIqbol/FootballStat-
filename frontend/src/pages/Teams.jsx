@@ -1,17 +1,18 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import { MapPin, Calendar, Shield } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { teamsAPI } from '../services/api'
 import { Skeleton } from '../components/ui/Skeleton'
 import Topbar from '../components/layout/Topbar'
 
 const LEAGUES = [
-  { id: 39,  name: 'Premier League', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
-  { id: 140, name: 'La Liga',        flag: '🇪🇸' },
-  { id: 135, name: 'Serie A',        flag: '🇮🇹' },
-  { id: 78,  name: 'Bundesliga',     flag: '🇩🇪' },
-  { id: 61,  name: 'Ligue 1',        flag: '🇫🇷' },
+  { id: 39,  name: 'Premier League' },
+  { id: 140, name: 'La Liga'        },
+  { id: 135, name: 'Serie A'        },
+  { id: 78,  name: 'Bundesliga'     },
+  { id: 61,  name: 'Ligue 1'        },
 ]
 
 export default function Teams() {
@@ -30,7 +31,7 @@ export default function Teams() {
             <button
               key={l.id}
               onClick={() => setLeague(l.id)}
-              className="px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-2"
               style={{
                 background: league === l.id
                   ? 'linear-gradient(135deg,#7c3aed,#4f46e5)'
@@ -39,7 +40,7 @@ export default function Teams() {
                 border: '1px solid ' + (league === l.id ? 'transparent' : 'rgba(124,58,237,0.15)'),
               }}
             >
-              <span>{l.flag}</span>
+              <Shield size={13} />
               {l.name}
             </button>
           ))}
@@ -50,7 +51,7 @@ export default function Teams() {
           {loading
             ? Array.from({ length: 12 }).map((_, i) => (
               <div key={i} className="glass p-5 flex flex-col items-center gap-3">
-                <Skeleton className="w-16 h-16 rounded-full" />
+                <Skeleton className="w-16 h-16 rounded-2xl" />
                 <Skeleton className="h-3 w-24" />
                 <Skeleton className="h-2 w-16" />
               </div>
@@ -65,24 +66,33 @@ export default function Teams() {
                 <Link to={`/teams/${team.id}`}>
                   <div className="glass hover-card p-5 flex flex-col items-center gap-3 text-center cursor-pointer">
                     <div
-                      className="w-16 h-16 rounded-2xl flex items-center justify-center p-2"
+                      className="w-16 h-16 rounded-2xl flex items-center justify-center p-2.5"
                       style={{ background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.2)' }}
                     >
-                      <img
-                        src={team.logo}
-                        alt={team.name}
-                        className="w-full h-full object-contain"
-                      />
+                      <img src={team.logo} alt={team.name} className="w-full h-full object-contain" />
                     </div>
+
                     <div>
                       <p className="text-sm font-bold text-white">{team.name}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">
-                        {team.country} · est. {team.founded}
-                      </p>
+                      <p className="text-xs text-slate-500 mt-0.5">{team.country}</p>
                     </div>
-                    {venue?.name && (
-                      <p className="text-xs text-purple-400 truncate w-full">🏟️ {venue.name}</p>
-                    )}
+
+                    <div className="flex flex-col gap-1 w-full">
+                      {team.founded && (
+                        <div className="flex items-center gap-1.5 justify-center">
+                          <Calendar size={11} className="text-slate-500" />
+                          <span className="text-xs text-slate-500">Est. {team.founded}</span>
+                        </div>
+                      )}
+                      {venue?.name && (
+                        <div className="flex items-center gap-1.5 justify-center">
+                          <MapPin size={11} className="text-purple-400" />
+                          <span className="text-xs text-purple-400 truncate max-w-[110px]">
+                            {venue.name}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </Link>
               </motion.div>

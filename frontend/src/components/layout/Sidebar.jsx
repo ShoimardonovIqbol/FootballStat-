@@ -1,12 +1,20 @@
 import { NavLink } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import {
+  LayoutDashboard,
+  CalendarDays,
+  BarChart3,
+  Shield,
+  Users,
+  Zap,
+} from 'lucide-react'
 
 const links = [
-  { to: '/',          icon: '⚡', label: 'Dashboard' },
-  { to: '/matches',   icon: '🏟️', label: 'Matches'   },
-  { to: '/standings', icon: '📊', label: 'Standings'  },
-  { to: '/teams',     icon: '🛡️', label: 'Teams'      },
-  { to: '/players',   icon: '⭐', label: 'Players'    },
+  { to: '/',          icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/matches',   icon: CalendarDays,    label: 'Matches'   },
+  { to: '/standings', icon: BarChart3,       label: 'Standings' },
+  { to: '/teams',     icon: Shield,          label: 'Teams'     },
+  { to: '/players',   icon: Users,           label: 'Players'   },
 ]
 
 export default function Sidebar() {
@@ -17,17 +25,15 @@ export default function Sidebar() {
       transition={{ duration: 0.4, ease: 'easeOut' }}
       className="fixed left-0 top-0 h-screen w-64 z-50 flex flex-col"
       style={{
-        background: 'rgba(8,8,23,0.9)',
+        background: 'rgba(8,8,23,0.92)',
         backdropFilter: 'blur(24px)',
         borderRight: '1px solid rgba(124,58,237,0.15)',
       }}
     >
       {/* Logo */}
-      <div className="flex items-center gap-3 px-6 py-6 mb-4">
-        <div
-          className="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold gradient-purple glow-purple"
-        >
-          ⚽
+      <div className="flex items-center gap-3 px-6 py-6 mb-2">
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center gradient-purple glow-purple">
+          <Zap size={18} color="#fff" fill="#fff" />
         </div>
         <div>
           <p className="font-bold text-white text-sm leading-tight">FootballStat</p>
@@ -37,7 +43,7 @@ export default function Sidebar() {
 
       {/* Nav */}
       <nav className="flex-1 px-3 space-y-1">
-        {links.map(({ to, icon, label }) => (
+        {links.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
             to={to}
@@ -51,13 +57,12 @@ export default function Sidebar() {
           >
             {({ isActive }) => (
               <>
-                <motion.span
-                  animate={{ scale: isActive ? 1.2 : 1 }}
-                  className="text-base"
-                >
-                  {icon}
-                </motion.span>
-                {label}
+                <Icon
+                  size={17}
+                  strokeWidth={isActive ? 2.5 : 1.8}
+                  className={isActive ? 'text-white' : 'text-slate-400'}
+                />
+                <span>{label}</span>
                 {isActive && (
                   <motion.div
                     layoutId="sidebar-indicator"
