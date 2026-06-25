@@ -1,49 +1,98 @@
 from typing import Optional
 
-import httpx
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Path, Query
 
-from config import BASE_URL, get_api_key
+from config import DEFAULT_SEASON
+from http_client import football_api
 
-router = APIRouter(tags=["teams"])
-
-
-async def fetch_football_data(endpoint: str, params: Optional[dict] = None):
-    api_key = get_api_key()
-    if not api_key:
-        raise HTTPException(status_code=500, detail="FOOTBALL_API_KEY is not set")
-
-    headers = {"x-apisports-key": api_key}
-    async with httpx.AsyncClient(timeout=15.0) as client:
-        response = await client.get(f"{BASE_URL}/{endpoint}", headers=headers, params=params or {})
-
-    if response.status_code != 200:
-        raise HTTPException(status_code=response.status_code, detail="Football API request failed")
-
-    try:
-        return response.json()
-    except ValueError as exc:
-        raise HTTPException(status_code=500, detail="Invalid JSON response from Football API") from exc
+router = APIRouter(tags=["Teams"])
 
 
-@router.get("")
+@router.get("", summary="List teams with optional filters")
 async def get_teams(
     league: Optional[int] = Query(None, description="League ID"),
     season: Optional[int] = Query(None, description="Season year"),
     country: Optional[str] = Query(None, description="Country name"),
+    search: Optional[str] = Query(None, description="Search by team name (min 3 chars)"),
 ):
-    params = {}
-    if league is not None:
-        params["league"] = league
+    params: dict = {}
+    if search:
+        params["search"] = search
     else:
-        params["league"] = 39
-
-    if season is not None:
-        params["season"] = season
-    else:
-        params["season"] = 2024
-
+        params["league"] = league or 39
+        params["season"] = season or DEFAULT_SEASON
     if country:
         params["country"] = country
+    return await football_api("teams", params=params, ttl=3600)
 
-    return await fetch_football_data("teams", params)
+
+@router.get("/countries", summary="Get all countries that have teams")
+async def get_countries():
+    return await football_api("countries", ttl=86400)
+
+
+@router.get("/{team_id}", summary="Get a team's full profile")
+async def get_team(team_id: int = Path(description="Team ID")):
+    data = await football_api("teams", params={"id": team_id}, ttl=3600)
+    if not data.get("response"):
+        raise HTTPException(status_code=404, detail="Team not found")
+    return data["response"][0]
+
+
+@router.get("/{team_id}/statistics", summary="Season statistics for a team")
+async def get_team_statistics(
+    team_id: int = Path(description="Team ID"),
+    league: int = Query(39, description="League ID"),
+    season: int = Query(DEFAULT_SEASON, description="Season year"),
+):
+    """Returns form, goals, wins/draws/losses, biggest wins, average goals, lineups used."""
+    return await football_api(
+        "teams/statistics",
+        params={"team": team_id, "league": league, "season": season},
+        ttl=600,
+    )
+
+
+@router.get("/{team_id}/fixtures", summary="Team's recent and upcoming fixtures")
+async def get_team_fixtures(
+    team_id: int = Path(description="Team ID"),
+    season: int = Query(DEFAULT_SEASON, description="Season year"),
+    league: Optional[int] = Query(None, description="Filter by league"),
+    last: Optional[int] = Query(None, ge=1, le=50, description="Last N fixtures"),
+    next: Optional[int] = Query(None, ge=1, le=50, description="Next N fixtures"),
+):
+    params: dict = {"team": team_id, "season": season}
+    if league:
+        params["league"] = league
+    if last:
+        params["last"] = last
+    if next:
+        params["next"] = next
+    return await football_api("fixtures", params=params, ttl=300)
+
+
+@router.get("/{team_id}/squad", summary="Current squad / roster of a team")
+async def get_team_squad(team_id: int = Path(description="Team ID")):
+    return await football_api("players/squads", params={"team": team_id}, ttl=3600)
+
+
+@router.get("/{team_id}/transfers", summary="Player transfers for a team")
+async def get_team_transfers(team_id: int = Path(description="Team ID")):
+    return await football_api("transfers", params={"team": team_id}, ttl=3600)
+
+
+@router.get("/{team_id}/injuries", summary="Current injury list for a team")
+async def get_team_injuries(
+    team_id: int = Path(description="Team ID"),
+    season: int = Query(DEFAULT_SEASON, description="Season year"),
+    league: Optional[int] = Query(None, description="League ID"),
+):
+    params: dict = {"team": team_id, "season": season}
+    if league:
+        params["league"] = league
+    return await football_api("injuries", params=params, ttl=600)
+
+
+@router.get("/{team_id}/trophies", summary="Trophies and titles won by a team")
+async def get_team_trophies(team_id: int = Path(description="Team ID")):
+    return await football_api("trophies", params={"team": team_id}, ttl=86400)
