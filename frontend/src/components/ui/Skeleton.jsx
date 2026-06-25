@@ -1,20 +1,27 @@
-export function Skeleton({ className = '', style = {} }) {
-  return <div className={`shimmer ${className}`} style={style} />
+const shimmer = {
+  background: 'linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%)',
+  backgroundSize: '200% 100%',
+  animation: 'shimmer 1.5s infinite',
+  borderRadius: 6,
+}
+
+export function Skeleton({ style = {} }) {
+  return <div className="shimmer" style={{ borderRadius: 6, ...style }} />
 }
 
 export function MatchCardSkeleton() {
   return (
-    <div className="glass p-4" style={{ borderRadius: 14 }}>
-      <div className="flex items-center justify-between mb-3">
-        <Skeleton className="h-3 w-24" />
-        <Skeleton className="h-3 w-10" />
-      </div>
-      <div className="flex items-center gap-3">
-        <Skeleton className="w-8 h-8 rounded-full" />
-        <Skeleton className="h-3 flex-1" />
-        <Skeleton className="h-8 w-20 rounded-xl" />
-        <Skeleton className="h-3 flex-1" />
-        <Skeleton className="w-8 h-8 rounded-full" />
+    <div style={{
+      padding: 14, borderRadius: 14,
+      background: 'rgba(16,16,42,0.7)',
+      border: '1px solid rgba(124,58,237,0.1)',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <Skeleton style={{ width: 28, height: 28, borderRadius: '50%' }} />
+        <Skeleton style={{ height: 12, flex: 1 }} />
+        <Skeleton style={{ height: 32, width: 72, borderRadius: 10 }} />
+        <Skeleton style={{ height: 12, flex: 1 }} />
+        <Skeleton style={{ width: 28, height: 28, borderRadius: '50%' }} />
       </div>
     </div>
   )
@@ -22,14 +29,14 @@ export function MatchCardSkeleton() {
 
 export function PlayerSkeleton() {
   return (
-    <div className="flex items-center gap-3 p-3">
-      <Skeleton className="w-6 h-3" />
-      <Skeleton className="w-10 h-10 rounded-full" />
-      <div className="flex-1 space-y-2">
-        <Skeleton className="h-3 w-28" />
-        <Skeleton className="h-2 w-20" />
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px' }}>
+      <Skeleton style={{ width: 20, height: 12 }} />
+      <Skeleton style={{ width: 38, height: 38, borderRadius: '50%' }} />
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <Skeleton style={{ height: 12, width: 110 }} />
+        <Skeleton style={{ height: 10, width: 80 }} />
       </div>
-      <Skeleton className="w-9 h-9 rounded-xl" />
+      <Skeleton style={{ width: 36, height: 36, borderRadius: 10 }} />
     </div>
   )
 }
