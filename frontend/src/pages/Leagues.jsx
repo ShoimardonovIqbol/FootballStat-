@@ -35,14 +35,14 @@ export default function Leagues() {
                 </div>
               </div>
             ))
-            : leagues.map(({ league, country }, i) => (
+            : leagues.map((item, i) => (
               <motion.div
-                key={league.id}
+                key={item.id}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.04 }}
               >
-                <Link to={`/leagues/${league.id}`} style={{ textDecoration: 'none' }}>
+                <Link to={`/leagues/${item.id}`} style={{ textDecoration: 'none' }}>
                   <div
                     style={{
                       display: 'flex',
@@ -64,7 +64,7 @@ export default function Leagues() {
                       e.currentTarget.style.background = 'rgba(16,16,42,0.75)'
                     }}
                   >
-                    {/* League logo */}
+                    {/* Logo */}
                     <div style={{
                       width: 52, height: 52, borderRadius: 12, flexShrink: 0,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -73,8 +73,8 @@ export default function Leagues() {
                       padding: 8,
                     }}>
                       <img
-                        src={league.logo}
-                        alt={league.name}
+                        src={item.logo}
+                        alt={item.name}
                         style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                         onError={e => { e.target.style.opacity = 0 }}
                       />
@@ -83,19 +83,19 @@ export default function Leagues() {
                     {/* Info */}
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <p style={{ fontSize: 14, fontWeight: 700, color: '#f1f5f9', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {league.name}
+                        {item.name}
                       </p>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
-                        {country.flag && (
-                          <img src={country.flag} alt="" style={{ width: 16, height: 11, objectFit: 'cover', borderRadius: 2 }} />
+                        {item.flag && (
+                          <img src={item.flag} alt="" style={{ width: 16, height: 11, objectFit: 'cover', borderRadius: 2 }} />
                         )}
-                        <span style={{ fontSize: 12, color: '#64748b' }}>{country.name}</span>
+                        <span style={{ fontSize: 12, color: '#64748b' }}>{item.country}</span>
                         <span style={{
                           fontSize: 10, fontWeight: 600, color: '#a78bfa',
                           background: 'rgba(124,58,237,0.15)',
                           padding: '2px 7px', borderRadius: 999, marginLeft: 4,
                         }}>
-                          {league.type === 'League' ? 'League' : 'Cup'}
+                          {item.type === 'League' ? 'League' : 'Cup'}
                         </span>
                       </div>
                     </div>

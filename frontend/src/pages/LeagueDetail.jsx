@@ -98,8 +98,8 @@ export default function LeagueDetail() {
   const assists    = useApi(() => playersAPI.getTopAssists(leagueId, 2024), [leagueId])
   const redcards   = useApi(() => playersAPI.getTopRedCards(leagueId, 2024), [leagueId])
 
-  const league  = leagueInfo.data?.response?.[0]?.league
-  const country = leagueInfo.data?.response?.[0]?.country
+  const league  = leagueInfo.data?.league
+  const country = leagueInfo.data?.country
 
   const tabData = {
     matches:  matches.data?.response  ?? [],
