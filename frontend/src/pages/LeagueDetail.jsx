@@ -19,23 +19,13 @@ const RANK_COLOR = ['#f59e0b', '#94a3b8', '#b45309']
 
 /* Static league metadata so header always shows even if API is down */
 const LEAGUE_META = {
-  39:  { name: 'Premier League',        country: 'England',      flag: 'https://media.api-sports.io/flags/gb.svg'  },
-  140: { name: 'La Liga',               country: 'Spain',        flag: 'https://media.api-sports.io/flags/es.svg'  },
-  135: { name: 'Serie A',               country: 'Italy',        flag: 'https://media.api-sports.io/flags/it.svg'  },
-  78:  { name: 'Bundesliga',            country: 'Germany',      flag: 'https://media.api-sports.io/flags/de.svg'  },
-  61:  { name: 'Ligue 1',              country: 'France',       flag: 'https://media.api-sports.io/flags/fr.svg'  },
-  2:   { name: 'UEFA Champions League', country: 'World',        flag: null                                        },
-  3:   { name: 'UEFA Europa League',    country: 'World',        flag: null                                        },
-  1:   { name: 'World Cup',             country: 'World',        flag: null                                        },
-  4:   { name: 'Euro Championship',     country: 'World',        flag: null                                        },
-  9:   { name: 'Copa America',          country: 'World',        flag: null                                        },
-  88:  { name: 'Eredivisie',            country: 'Netherlands',  flag: 'https://media.api-sports.io/flags/nl.svg'  },
-  94:  { name: 'Primeira Liga',         country: 'Portugal',     flag: 'https://media.api-sports.io/flags/pt.svg'  },
-  40:  { name: 'Championship',          country: 'England',      flag: 'https://media.api-sports.io/flags/gb.svg'  },
-  253: { name: 'Major League Soccer',   country: 'USA',          flag: 'https://media.api-sports.io/flags/us.svg'  },
-  262: { name: 'Liga MX',              country: 'Mexico',       flag: 'https://media.api-sports.io/flags/mx.svg'  },
-  307: { name: 'Pro League',            country: 'Saudi Arabia', flag: 'https://media.api-sports.io/flags/sa.svg'  },
-  143: { name: 'Copa del Rey',          country: 'Spain',        flag: 'https://media.api-sports.io/flags/es.svg'  },
+  39:  { name: 'Premier League',        country: 'England', flag: 'https://media.api-sports.io/flags/gb.svg' },
+  140: { name: 'La Liga',               country: 'Spain',   flag: 'https://media.api-sports.io/flags/es.svg' },
+  135: { name: 'Serie A',               country: 'Italy',   flag: 'https://media.api-sports.io/flags/it.svg' },
+  61:  { name: 'Ligue 1',              country: 'France',  flag: 'https://media.api-sports.io/flags/fr.svg' },
+  1:   { name: 'World Cup',             country: 'World',   flag: null                                       },
+  2:   { name: 'UEFA Champions League', country: 'World',   flag: null                                       },
+  3:   { name: 'UEFA Europa League',    country: 'World',   flag: null                                       },
 }
 
 function StatRow({ item, rank, statKey }) {

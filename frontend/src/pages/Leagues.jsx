@@ -4,23 +4,13 @@ import { Trophy } from 'lucide-react'
 import Topbar from '../components/layout/Topbar'
 
 const LEAGUES = [
-  { id: 39,  name: 'Premier League',        country: 'England',      flag: 'https://media.api-sports.io/flags/gb.svg'  },
-  { id: 140, name: 'La Liga',               country: 'Spain',        flag: 'https://media.api-sports.io/flags/es.svg'  },
-  { id: 135, name: 'Serie A',               country: 'Italy',        flag: 'https://media.api-sports.io/flags/it.svg'  },
-  { id: 78,  name: 'Bundesliga',            country: 'Germany',      flag: 'https://media.api-sports.io/flags/de.svg'  },
-  { id: 61,  name: 'Ligue 1',              country: 'France',       flag: 'https://media.api-sports.io/flags/fr.svg'  },
-  { id: 2,   name: 'UEFA Champions League', country: 'World',        flag: null                                        },
-  { id: 3,   name: 'UEFA Europa League',    country: 'World',        flag: null                                        },
-  { id: 1,   name: 'World Cup',             country: 'World',        flag: null                                        },
-  { id: 4,   name: 'Euro Championship',     country: 'World',        flag: null                                        },
-  { id: 9,   name: 'Copa America',          country: 'World',        flag: null                                        },
-  { id: 88,  name: 'Eredivisie',            country: 'Netherlands',  flag: 'https://media.api-sports.io/flags/nl.svg'  },
-  { id: 94,  name: 'Primeira Liga',         country: 'Portugal',     flag: 'https://media.api-sports.io/flags/pt.svg'  },
-  { id: 40,  name: 'Championship',          country: 'England',      flag: 'https://media.api-sports.io/flags/gb.svg'  },
-  { id: 253, name: 'Major League Soccer',   country: 'USA',          flag: 'https://media.api-sports.io/flags/us.svg'  },
-  { id: 262, name: 'Liga MX',              country: 'Mexico',       flag: 'https://media.api-sports.io/flags/mx.svg'  },
-  { id: 307, name: 'Pro League',            country: 'Saudi Arabia', flag: 'https://media.api-sports.io/flags/sa.svg'  },
-  { id: 143, name: 'Copa del Rey',          country: 'Spain',        flag: 'https://media.api-sports.io/flags/es.svg'  },
+  { id: 39,  name: 'Premier League',        country: 'England', flag: 'https://media.api-sports.io/flags/gb.svg' },
+  { id: 140, name: 'La Liga',               country: 'Spain',   flag: 'https://media.api-sports.io/flags/es.svg' },
+  { id: 135, name: 'Serie A',               country: 'Italy',   flag: 'https://media.api-sports.io/flags/it.svg' },
+  { id: 61,  name: 'Ligue 1',              country: 'France',  flag: 'https://media.api-sports.io/flags/fr.svg' },
+  { id: 1,   name: 'World Cup',             country: 'World',   flag: null                                       },
+  { id: 2,   name: 'UEFA Champions League', country: 'World',   flag: null                                       },
+  { id: 3,   name: 'UEFA Europa League',    country: 'World',   flag: null                                       },
 ]
 
 /* Stagger container + card variants */
