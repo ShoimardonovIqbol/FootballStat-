@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Goal, Footprints, Square, CalendarDays, ArrowLeft } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
-import { leaguesAPI, matchesAPI, playersAPI } from '../services/api'
+import { matchesAPI, playersAPI } from '../services/api'
 import MatchCard from '../components/ui/MatchCard'
 import { MatchCardSkeleton, PlayerSkeleton } from '../components/ui/Skeleton'
 import Topbar from '../components/layout/Topbar'
@@ -17,12 +17,32 @@ const TABS = [
 
 const RANK_COLOR = ['#f59e0b', '#94a3b8', '#b45309']
 
+/* Static league metadata so header always shows even if API is down */
+const LEAGUE_META = {
+  39:  { name: 'Premier League',        country: 'England',      flag: 'https://media.api-sports.io/flags/gb.svg'  },
+  140: { name: 'La Liga',               country: 'Spain',        flag: 'https://media.api-sports.io/flags/es.svg'  },
+  135: { name: 'Serie A',               country: 'Italy',        flag: 'https://media.api-sports.io/flags/it.svg'  },
+  78:  { name: 'Bundesliga',            country: 'Germany',      flag: 'https://media.api-sports.io/flags/de.svg'  },
+  61:  { name: 'Ligue 1',              country: 'France',       flag: 'https://media.api-sports.io/flags/fr.svg'  },
+  2:   { name: 'UEFA Champions League', country: 'World',        flag: null                                        },
+  3:   { name: 'UEFA Europa League',    country: 'World',        flag: null                                        },
+  1:   { name: 'World Cup',             country: 'World',        flag: null                                        },
+  4:   { name: 'Euro Championship',     country: 'World',        flag: null                                        },
+  9:   { name: 'Copa America',          country: 'World',        flag: null                                        },
+  88:  { name: 'Eredivisie',            country: 'Netherlands',  flag: 'https://media.api-sports.io/flags/nl.svg'  },
+  94:  { name: 'Primeira Liga',         country: 'Portugal',     flag: 'https://media.api-sports.io/flags/pt.svg'  },
+  40:  { name: 'Championship',          country: 'England',      flag: 'https://media.api-sports.io/flags/gb.svg'  },
+  253: { name: 'Major League Soccer',   country: 'USA',          flag: 'https://media.api-sports.io/flags/us.svg'  },
+  262: { name: 'Liga MX',              country: 'Mexico',       flag: 'https://media.api-sports.io/flags/mx.svg'  },
+  307: { name: 'Pro League',            country: 'Saudi Arabia', flag: 'https://media.api-sports.io/flags/sa.svg'  },
+  143: { name: 'Copa del Rey',          country: 'Spain',        flag: 'https://media.api-sports.io/flags/es.svg'  },
+}
+
 function StatRow({ item, rank, statKey }) {
   const stats = item?.statistics?.[0]
   const val = statKey === 'scorers'  ? stats?.goals?.total
             : statKey === 'assists'  ? stats?.goals?.assists
-            : statKey === 'redcards' ? stats?.cards?.red
-            : 0
+            : stats?.cards?.red
 
   return (
     <motion.div
@@ -87,19 +107,31 @@ function StatRow({ item, rank, statKey }) {
   )
 }
 
+function EmptyState({ message }) {
+  return (
+    <div style={{
+      padding: '56px 0', textAlign: 'center',
+      background: 'rgba(16,16,42,0.7)',
+      border: '1px solid rgba(124,58,237,0.12)',
+      borderRadius: 16,
+    }}>
+      <CalendarDays size={36} style={{ color: '#334155', margin: '0 auto 10px', display: 'block' }} />
+      <p style={{ color: '#64748b', fontSize: 14 }}>{message}</p>
+    </div>
+  )
+}
+
 export default function LeagueDetail() {
-  const { id } = useParams()
-  const leagueId = Number(id)
+  const { id }     = useParams()
+  const leagueId   = Number(id)
   const [tab, setTab] = useState('matches')
 
-  const leagueInfo = useApi(() => leaguesAPI.getById(leagueId), [leagueId])
-  const matches    = useApi(() => matchesAPI.getList({ league: leagueId, season: 2024, last: 20 }), [leagueId])
-  const scorers    = useApi(() => playersAPI.getTopScorers(leagueId, 2024), [leagueId])
-  const assists    = useApi(() => playersAPI.getTopAssists(leagueId, 2024), [leagueId])
-  const redcards   = useApi(() => playersAPI.getTopRedCards(leagueId, 2024), [leagueId])
+  const meta = LEAGUE_META[leagueId] ?? { name: 'League', country: '', flag: null }
 
-  const league  = leagueInfo.data?.league
-  const country = leagueInfo.data?.country
+  const matches  = useApi(() => matchesAPI.getList({ league: leagueId, season: 2024, last: 20 }), [leagueId])
+  const scorers  = useApi(() => playersAPI.getTopScorers(leagueId, 2024),  [leagueId])
+  const assists  = useApi(() => playersAPI.getTopAssists(leagueId, 2024),  [leagueId])
+  const redcards = useApi(() => playersAPI.getTopRedCards(leagueId, 2024), [leagueId])
 
   const tabData = {
     matches:  matches.data?.response  ?? [],
@@ -113,10 +145,16 @@ export default function LeagueDetail() {
     assists:  assists.loading,
     redcards: redcards.loading,
   }
+  const tabError = {
+    matches:  matches.error,
+    scorers:  scorers.error,
+    assists:  assists.error,
+    redcards: redcards.error,
+  }
 
   return (
     <div style={{ minHeight: '100vh' }}>
-      <Topbar title={league?.name ?? 'League'} />
+      <Topbar title={meta.name} />
 
       <div style={{ padding: '20px 32px', display: 'flex', flexDirection: 'column', gap: 20 }}>
 
@@ -136,7 +174,6 @@ export default function LeagueDetail() {
             overflow: 'hidden',
           }}
         >
-          {/* Glow */}
           <div style={{
             position: 'absolute', top: -40, right: -40,
             width: 200, height: 200, borderRadius: '50%',
@@ -154,7 +191,7 @@ export default function LeagueDetail() {
               cursor: 'pointer',
               transition: 'background 0.15s',
             }}
-            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.12)'}
             onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
             >
               <ArrowLeft size={16} style={{ color: '#94a3b8' }} />
@@ -162,39 +199,49 @@ export default function LeagueDetail() {
           </Link>
 
           {/* Logo */}
-          {league?.logo && (
-            <div style={{
-              width: 64, height: 64, borderRadius: 16, flexShrink: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              padding: 10,
-            }}>
-              <img src={league.logo} alt={league.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-            </div>
-          )}
+          <div style={{
+            width: 64, height: 64, borderRadius: 16, flexShrink: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            padding: 10,
+          }}>
+            <img
+              src={`https://media.api-sports.io/football/leagues/${leagueId}.png`}
+              alt={meta.name}
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+              onError={e => { e.target.style.opacity = 0.2 }}
+            />
+          </div>
 
           {/* Name + country */}
           <div>
             <h1 style={{ fontSize: 22, fontWeight: 800, color: '#fff', margin: 0 }}>
-              {league?.name ?? '...'}
+              {meta.name}
             </h1>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
-              {country?.flag && (
-                <img src={country.flag} alt="" style={{ width: 20, height: 14, objectFit: 'cover', borderRadius: 2 }} />
+              {meta.flag && (
+                <img
+                  src={meta.flag}
+                  alt=""
+                  style={{ width: 20, height: 14, objectFit: 'cover', borderRadius: 2 }}
+                  onError={e => { e.target.style.display = 'none' }}
+                />
               )}
-              <span style={{ fontSize: 13, color: '#94a3b8' }}>{country?.name}</span>
+              <span style={{ fontSize: 13, color: '#94a3b8' }}>{meta.country}</span>
               <span style={{
                 fontSize: 11, fontWeight: 600, color: '#a78bfa',
                 background: 'rgba(124,58,237,0.2)',
                 padding: '2px 10px', borderRadius: 999,
-              }}>Season 2024/25</span>
+              }}>
+                Season 2024/25
+              </span>
             </div>
           </div>
         </motion.div>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {TABS.map(({ key, label, icon: Icon }) => (
             <button
               key={key}
@@ -228,22 +275,14 @@ export default function LeagueDetail() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
           >
-            {tab === 'matches' ? (
+            {tabError[tab] ? (
+              <EmptyState message="API limit reached — please try again tomorrow" />
+            ) : tab === 'matches' ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {tabLoading.matches
                   ? Array.from({ length: 6 }).map((_, i) => <MatchCardSkeleton key={i} />)
                   : tabData.matches.length === 0
-                  ? (
-                    <div style={{
-                      padding: '48px 0', textAlign: 'center',
-                      background: 'rgba(16,16,42,0.7)',
-                      border: '1px solid rgba(124,58,237,0.12)',
-                      borderRadius: 16,
-                    }}>
-                      <CalendarDays size={36} style={{ color: '#334155', margin: '0 auto 10px' }} />
-                      <p style={{ color: '#64748b', fontSize: 14 }}>No matches found</p>
-                    </div>
-                  )
+                  ? <EmptyState message="No matches found" />
                   : tabData.matches.map((m, i) => (
                     <MatchCard key={m.fixture.id} fixture={m} index={i} />
                   ))
@@ -256,7 +295,7 @@ export default function LeagueDetail() {
                 borderRadius: 16,
                 overflow: 'hidden',
               }}>
-                {/* Table header */}
+                {/* Header row */}
                 <div style={{
                   display: 'grid',
                   gridTemplateColumns: '2rem 3rem 1fr 4rem',
@@ -275,6 +314,12 @@ export default function LeagueDetail() {
 
                 {tabLoading[tab]
                   ? Array.from({ length: 10 }).map((_, i) => <PlayerSkeleton key={i} />)
+                  : tabData[tab].length === 0
+                  ? (
+                    <div style={{ padding: '40px 0', textAlign: 'center' }}>
+                      <p style={{ color: '#64748b', fontSize: 13 }}>No data available</p>
+                    </div>
+                  )
                   : tabData[tab].map((item, i) => (
                     <StatRow key={item.player.id} item={item} rank={i + 1} statKey={tab} />
                   ))
