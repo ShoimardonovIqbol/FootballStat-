@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import Sidebar     from './components/layout/Sidebar'
+import Sidebar          from './components/layout/Sidebar'
+import MatrixBackground from './components/ui/MatrixBackground'
 import Home        from './pages/Home'
 import Matches     from './pages/Matches'
 import Standings   from './pages/Standings'
@@ -47,12 +48,15 @@ function AppRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
-      {/* Animated background orbs */}
+      {/* Matrix character background */}
+      <MatrixBackground />
+
+      {/* Floating orbs on top of matrix */}
       <div className="orb" style={{ width: 384, height: 384, background:'#7c3aed', top:'5%',  left:'18%', animationDelay:'0s'  }} />
       <div className="orb" style={{ width: 320, height: 320, background:'#4f46e5', top:'55%', right:'10%', animationDelay:'4s'  }} />
       <div className="orb" style={{ width: 256, height: 256, background:'#a855f7', top:'35%', left:'48%', animationDelay:'8s'  }} />
 
-      <div style={{ display: 'flex', minHeight: '100vh' }}>
+      <div style={{ display: 'flex', minHeight: '100vh', position: 'relative', zIndex: 1 }}>
         <Sidebar />
         <main style={{ flex: 1, marginLeft: 256, minHeight: '100vh', position: 'relative' }}>
           <AppRoutes />
