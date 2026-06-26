@@ -1,11 +1,13 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import Sidebar   from './components/layout/Sidebar'
-import Home      from './pages/Home'
-import Matches   from './pages/Matches'
-import Standings from './pages/Standings'
-import Teams     from './pages/Teams'
-import Players   from './pages/Players'
+import Sidebar     from './components/layout/Sidebar'
+import Home        from './pages/Home'
+import Matches     from './pages/Matches'
+import Standings   from './pages/Standings'
+import Teams       from './pages/Teams'
+import Players     from './pages/Players'
+import Leagues     from './pages/Leagues'
+import LeagueDetail from './pages/LeagueDetail'
 
 function PageWrapper({ children }) {
   return (
@@ -25,11 +27,13 @@ function AppRoutes() {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        <Route path="/"          element={<PageWrapper><Home /></PageWrapper>} />
-        <Route path="/matches/*" element={<PageWrapper><Matches /></PageWrapper>} />
-        <Route path="/standings" element={<PageWrapper><Standings /></PageWrapper>} />
-        <Route path="/teams/*"   element={<PageWrapper><Teams /></PageWrapper>} />
-        <Route path="/players/*" element={<PageWrapper><Players /></PageWrapper>} />
+        <Route path="/"             element={<PageWrapper><Home /></PageWrapper>} />
+        <Route path="/matches/*"    element={<PageWrapper><Matches /></PageWrapper>} />
+        <Route path="/standings"    element={<PageWrapper><Standings /></PageWrapper>} />
+        <Route path="/teams/*"      element={<PageWrapper><Teams /></PageWrapper>} />
+        <Route path="/players/*"    element={<PageWrapper><Players /></PageWrapper>} />
+        <Route path="/leagues"      element={<PageWrapper><Leagues /></PageWrapper>} />
+        <Route path="/leagues/:id"  element={<PageWrapper><LeagueDetail /></PageWrapper>} />
       </Routes>
     </AnimatePresence>
   )

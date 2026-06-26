@@ -38,6 +38,10 @@ export const playersAPI = {
     api.get('/players/top-scorers', { params: { league, season } }),
   getTopAssists: (league=39, season=2024) =>
     api.get('/players/top-assists', { params: { league, season } }),
+  getTopRedCards: (league=39, season=2024) =>
+    api.get('/players/top-red-cards', { params: { league, season } }),
+  getTopYellowCards: (league=39, season=2024) =>
+    api.get('/players/top-yellow-cards', { params: { league, season } }),
 }
 
 export const searchAPI = {

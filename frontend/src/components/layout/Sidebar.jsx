@@ -7,11 +7,13 @@ import {
   Shield,
   Users,
   Zap,
+  Trophy,
 } from 'lucide-react'
 
 const links = [
   { to: '/',          icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/matches',   icon: CalendarDays,    label: 'Matches'   },
+  { to: '/leagues',   icon: Trophy,          label: 'Leagues'   },
   { to: '/standings', icon: BarChart3,       label: 'Standings' },
   { to: '/teams',     icon: Shield,          label: 'Teams'     },
   { to: '/players',   icon: Users,           label: 'Players'   },
