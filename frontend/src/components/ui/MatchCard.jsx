@@ -4,21 +4,6 @@ import { Link } from 'react-router-dom'
 const STATUS_LIVE = ['1H', '2H', 'HT', 'ET', 'BT', 'P', 'INT']
 const STATUS_FT   = ['FT', 'AET', 'PEN']
 
-function TeamLogo({ src, name }) {
-  const initials = (name || '?').slice(0, 2).toUpperCase()
-  return src ? (
-    <img
-      src={src}
-      alt={name}
-      className="w-7 h-7 object-contain shrink-0"
-      onError={e => {
-        e.target.style.display = 'none'
-        e.target.nextSibling.style.display = 'flex'
-      }}
-    />
-  ) : null
-}
-
 export default function MatchCard({ fixture, index = 0 }) {
   const { fixture: f, teams, goals } = fixture
   if (!teams?.home || !teams?.away) return null
@@ -33,24 +18,25 @@ export default function MatchCard({ fixture, index = 0 }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 14 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.04, duration: 0.28 }}
-      whileHover={{ scale: 1.015 }}
+      initial={{ opacity: 0, x: -16 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: index * 0.05, type: 'spring', stiffness: 260, damping: 20 }}
+      whileHover={{ scale: 1.018, y: -1 }}
+      whileTap={{ scale: 0.98 }}
     >
-      <Link to={`/matches/${f.id}`}>
-        <div
+      <Link to={`/matches/${f.id}`} style={{ textDecoration: 'none' }}>
+        <motion.div
+          animate={isLive ? { boxShadow: ['0 0 0px rgba(124,58,237,0)', '0 0 18px rgba(124,58,237,0.35)', '0 0 0px rgba(124,58,237,0)'] } : {}}
+          transition={isLive ? { duration: 2.5, repeat: Infinity } : {}}
           style={{
             display: 'grid',
             gridTemplateColumns: '1fr auto 1fr',
             alignItems: 'center',
-            gap: '10px',
+            gap: 10,
             padding: '10px 14px',
             borderRadius: 12,
             background: isLive ? 'rgba(124,58,237,0.1)' : 'rgba(16,16,42,0.55)',
             border: '1px solid ' + (isLive ? 'rgba(124,58,237,0.35)' : 'rgba(124,58,237,0.1)'),
-            cursor: 'pointer',
-            transition: 'border-color 0.2s',
           }}
         >
           {/* HOME TEAM */}
@@ -63,14 +49,7 @@ export default function MatchCard({ fixture, index = 0 }) {
                 onError={e => { e.target.style.opacity = 0 }}
               />
             )}
-            <span style={{
-              fontSize: 13,
-              fontWeight: 600,
-              color: '#f1f5f9',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#f1f5f9', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {teams.home.name}
             </span>
           </div>
@@ -78,26 +57,20 @@ export default function MatchCard({ fixture, index = 0 }) {
           {/* SCORE / TIME */}
           <div style={{ flexShrink: 0, textAlign: 'center', minWidth: 68 }}>
             {isNS ? (
-              <div style={{
-                padding: '6px 10px',
-                borderRadius: 8,
-                background: 'rgba(100,116,139,0.15)',
-                border: '1px solid rgba(100,116,139,0.2)',
-              }}>
-                <span style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8' }}>
-                  {kickoff}
-                </span>
+              <div style={{ padding: '6px 10px', borderRadius: 8, background: 'rgba(100,116,139,0.15)', border: '1px solid rgba(100,116,139,0.2)' }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8' }}>{kickoff}</span>
               </div>
             ) : (
-              <div style={{
-                padding: '6px 10px',
-                borderRadius: 8,
-                background: isLive
-                  ? 'linear-gradient(135deg,#7c3aed,#4f46e5)'
-                  : 'rgba(124,58,237,0.2)',
-                border: '1px solid ' + (isLive ? 'transparent' : 'rgba(124,58,237,0.35)'),
-                boxShadow: isLive ? '0 0 16px rgba(124,58,237,0.5)' : 'none',
-              }}>
+              <motion.div
+                animate={isLive ? { scale: [1, 1.05, 1] } : {}}
+                transition={isLive ? { duration: 2, repeat: Infinity } : {}}
+                style={{
+                  padding: '6px 10px', borderRadius: 8,
+                  background: isLive ? 'linear-gradient(135deg,#7c3aed,#4f46e5)' : 'rgba(124,58,237,0.2)',
+                  border: '1px solid ' + (isLive ? 'transparent' : 'rgba(124,58,237,0.35)'),
+                  boxShadow: isLive ? '0 0 16px rgba(124,58,237,0.5)' : 'none',
+                }}
+              >
                 <span style={{ fontSize: 14, fontWeight: 800, color: '#fff', letterSpacing: 1 }}>
                   {goals.home ?? 0} : {goals.away ?? 0}
                 </span>
@@ -107,24 +80,14 @@ export default function MatchCard({ fixture, index = 0 }) {
                     <span style={{ fontSize: 10, color: '#86efac' }}>{f.status.elapsed}'</span>
                   </div>
                 )}
-                {isFT && (
-                  <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 1 }}>FT</div>
-                )}
-              </div>
+                {isFT && <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 1 }}>FT</div>}
+              </motion.div>
             )}
           </div>
 
           {/* AWAY TEAM */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8, overflow: 'hidden' }}>
-            <span style={{
-              fontSize: 13,
-              fontWeight: 600,
-              color: '#f1f5f9',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'right',
-            }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#f1f5f9', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'right' }}>
               {teams.away.name}
             </span>
             {teams.away.logo && (
@@ -136,8 +99,7 @@ export default function MatchCard({ fixture, index = 0 }) {
               />
             )}
           </div>
-
-        </div>
+        </motion.div>
       </Link>
     </motion.div>
   )

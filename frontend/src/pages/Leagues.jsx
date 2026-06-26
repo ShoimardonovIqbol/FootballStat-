@@ -23,12 +23,19 @@ const LEAGUES = [
   { id: 143, name: 'Copa del Rey',          country: 'Spain',        flag: 'https://media.api-sports.io/flags/es.svg'  },
 ]
 
-const TIER_COLORS = {
-  2:   '#f59e0b',
-  3:   '#f97316',
-  1:   '#22d47a',
-  4:   '#6366f1',
-  9:   '#ec4899',
+/* Stagger container + card variants */
+const container = {
+  hidden: {},
+  show: {
+    transition: { staggerChildren: 0.055, delayChildren: 0.05 }
+  }
+}
+const card = {
+  hidden: { opacity: 0, y: 28, scale: 0.94 },
+  show:   {
+    opacity: 1, y: 0, scale: 1,
+    transition: { type: 'spring', stiffness: 280, damping: 22 }
+  }
 }
 
 export default function Leagues() {
@@ -37,20 +44,33 @@ export default function Leagues() {
       <Topbar title="Leagues" />
 
       <div style={{ padding: '24px 32px' }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: 14,
-        }}>
-          {LEAGUES.map((item, i) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.04 }}
-            >
+
+        {/* Section heading */}
+        <motion.div
+          initial={{ opacity: 0, x: -16 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4 }}
+          style={{ marginBottom: 20 }}
+        >
+          <h2 style={{ fontSize: 13, fontWeight: 700, color: '#64748b', letterSpacing: '0.08em', textTransform: 'uppercase', margin: 0 }}>
+            {LEAGUES.length} Competitions
+          </h2>
+        </motion.div>
+
+        {/* Stagger grid */}
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}
+        >
+          {LEAGUES.map((item) => (
+            <motion.div key={item.id} variants={card}>
               <Link to={`/leagues/${item.id}`} style={{ textDecoration: 'none' }}>
-                <div
+                <motion.div
+                  whileHover={{ scale: 1.03, y: -3, borderColor: 'rgba(124,58,237,0.5)' }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 22 }}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -60,17 +80,7 @@ export default function Leagues() {
                     background: 'rgba(16,16,42,0.75)',
                     border: '1px solid rgba(124,58,237,0.12)',
                     cursor: 'pointer',
-                    transition: 'all 0.2s',
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.border = '1px solid rgba(124,58,237,0.45)'
-                    e.currentTarget.style.background = 'rgba(124,58,237,0.09)'
-                    e.currentTarget.style.transform = 'translateY(-2px)'
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.border = '1px solid rgba(124,58,237,0.12)'
-                    e.currentTarget.style.background = 'rgba(16,16,42,0.75)'
-                    e.currentTarget.style.transform = 'none'
+                    backdropFilter: 'blur(12px)',
                   }}
                 >
                   {/* Logo */}
@@ -85,7 +95,7 @@ export default function Leagues() {
                       src={`https://media.api-sports.io/football/leagues/${item.id}.png`}
                       alt={item.name}
                       style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                      onError={e => { e.target.style.opacity = 0.2 }}
+                      onError={e => { e.target.style.opacity = 0.15 }}
                     />
                   </div>
 
@@ -110,15 +120,17 @@ export default function Leagues() {
                     </div>
                   </div>
 
-                  <Trophy
-                    size={15}
-                    style={{ color: TIER_COLORS[item.id] || '#7c3aed', flexShrink: 0 }}
-                  />
-                </div>
+                  <motion.div
+                    animate={{ rotate: [0, 10, -10, 0] }}
+                    transition={{ duration: 2.5, repeat: Infinity, delay: Math.random() * 2 }}
+                  >
+                    <Trophy size={15} style={{ color: '#7c3aed' }} />
+                  </motion.div>
+                </motion.div>
               </Link>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </div>
   )
