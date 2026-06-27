@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'motion/react'
 import { Search, Radio } from 'lucide-react'
@@ -106,6 +106,18 @@ export default function Topbar({ title }) {
   const [results, setResults] = useState(null)
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
+  const searchRef = useRef(null)
+
+  useEffect(() => {
+    const handler = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault()
+        searchRef.current?.focus()
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [])
 
   const handleSearch = async (val) => {
     setQ(val)
@@ -138,10 +150,11 @@ export default function Topbar({ title }) {
         <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
         <input
           value={q}
+          ref={searchRef}
           onChange={e => handleSearch(e.target.value)}
           onBlur={() => setTimeout(() => setOpen(false), 200)}
           onFocus={() => { if (results) setOpen(true) }}
-          placeholder="Search teams, players…"
+          placeholder="Search… (Ctrl+K)"
           style={{
             width: '100%',
             paddingLeft: 36,
