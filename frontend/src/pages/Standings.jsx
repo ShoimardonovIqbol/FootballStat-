@@ -7,11 +7,12 @@ import { Skeleton } from '../components/ui/Skeleton'
 import Topbar from '../components/layout/Topbar'
 
 const LEAGUES = [
-  { id: 39,  name: 'Premier League', country: 'England' },
-  { id: 140, name: 'La Liga',        country: 'Spain'   },
-  { id: 135, name: 'Serie A',        country: 'Italy'   },
-  { id: 61,  name: 'Ligue 1',        country: 'France'  },
-  { id: 2,   name: 'UCL',            country: 'Europe'  },
+  { id: 39,  name: 'Premier League', country: 'England', season: 2024 },
+  { id: 140, name: 'La Liga',        country: 'Spain',   season: 2024 },
+  { id: 135, name: 'Serie A',        country: 'Italy',   season: 2024 },
+  { id: 61,  name: 'Ligue 1',        country: 'France',  season: 2024 },
+  { id: 2,   name: 'UCL',            country: 'Europe',  season: 2024 },
+  { id: 1,   name: 'World Cup 2022', country: 'Qatar',   season: 2022 },
 ]
 
 const FORM_COLOR = {
@@ -57,7 +58,7 @@ const COLS = '2.5rem 2.5rem 1fr 2.5rem 2.5rem 2.5rem 2.5rem 2.5rem 2.5rem 6.5rem
 
 export default function Standings() {
   const [leagueId, setLeagueId] = useState(39)
-  const { data, loading, error } = useApi(() => standingsAPI.get(leagueId, 2024), [leagueId])
+  const { data, loading, error } = useApi(() => standingsAPI.get(leagueId, current?.season ?? 2024), [leagueId])
 
   const table   = data?.response?.[0]?.league?.standings?.[0] ?? []
   const lgInfo  = data?.response?.[0]?.league
