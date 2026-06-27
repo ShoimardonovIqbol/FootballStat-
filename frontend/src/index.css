@@ -112,6 +112,71 @@ body {
 @keyframes spin { to { transform: rotate(360deg); } }
 .spin { animation: spin 0.8s linear infinite; }
 
+/* ── Team flip card ── */
+@keyframes team-border-spin {
+  0%   { transform: rotateZ(0deg);   }
+  100% { transform: rotateZ(360deg); }
+}
+@keyframes team-blob-float {
+  0%,100% { transform: translateY(0px);  }
+  50%     { transform: translateY(10px); }
+}
+.team-flip-wrap {
+  width: 100%;
+  aspect-ratio: 3/4;
+  perspective: 1000px;
+}
+.team-flip-inner {
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 350ms cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 0 12px 2px rgba(0,0,0,0.7);
+  border-radius: 12px;
+  position: relative;
+}
+.team-flip-wrap:hover .team-flip-inner { transform: rotateY(180deg); }
+.team-flip-front,
+.team-flip-back {
+  background-color: #0d0d1e;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.team-flip-front { transform: rotateY(180deg); color: white; }
+.team-flip-back  { display: flex; align-items: center; justify-content: center; }
+.team-flip-back::before {
+  position: absolute;
+  content: '';
+  display: block;
+  width: 160px;
+  height: 160%;
+  background: linear-gradient(90deg, transparent, #7c3aed, #a855f7, #4f46e5, #7c3aed, transparent);
+  animation: team-border-spin 5s infinite linear;
+}
+.team-flip-back-inner {
+  position: absolute;
+  width: 99%; height: 99%;
+  background: #0d0d1e;
+  border-radius: 11px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: white;
+}
+.team-blob {
+  border-radius: 50%;
+  filter: blur(18px);
+  animation: team-blob-float 2600ms infinite ease-in-out;
+  position: absolute;
+}
+
 /* ── Fade-up entrance ── */
 @keyframes fade-up {
   from { opacity:0; transform:translateY(20px); }

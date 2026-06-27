@@ -15,7 +15,7 @@ async def get_standings(
     return await football_api(
         "standings",
         params={"league": league, "season": season},
-        ttl=600,
+        ttl=21600,
     )
 
 
@@ -28,7 +28,7 @@ async def get_top_standings(
     data = await football_api(
         "standings",
         params={"league": league, "season": season},
-        ttl=600,
+        ttl=21600,
     )
     try:
         table = data["response"][0]["league"]["standings"][0]

@@ -11,7 +11,7 @@ router = APIRouter(tags=["Leagues"])
 @router.get("", summary="Get all major leagues")
 async def get_leagues():
     """Returns the curated list of major world leagues with logo and country info."""
-    data = await football_api("leagues", ttl=3600)
+    data = await football_api("leagues", ttl=86400)
     filtered = [
         {
             "id": item["league"]["id"],
@@ -40,7 +40,7 @@ async def get_all_leagues(
         params["type"] = type
     if search:
         params["search"] = search
-    return await football_api("leagues", params=params, ttl=3600)
+    return await football_api("leagues", params=params, ttl=86400)
 
 
 @router.get("/{league_id}", summary="Get a single league's full details")
@@ -51,7 +51,7 @@ async def get_league(
     params: dict = {"id": league_id}
     if season:
         params["season"] = season
-    data = await football_api("leagues", params=params, ttl=3600)
+    data = await football_api("leagues", params=params, ttl=86400)
     if not data.get("response"):
         raise HTTPException(status_code=404, detail="League not found")
     return data["response"][0]
@@ -59,7 +59,7 @@ async def get_league(
 
 @router.get("/{league_id}/seasons", summary="Get all seasons for a league")
 async def get_league_seasons(league_id: int = Path(description="League ID")):
-    data = await football_api("leagues", params={"id": league_id}, ttl=3600)
+    data = await football_api("leagues", params={"id": league_id}, ttl=86400)
     if not data.get("response"):
         raise HTTPException(status_code=404, detail="League not found")
     league_data = data["response"][0]

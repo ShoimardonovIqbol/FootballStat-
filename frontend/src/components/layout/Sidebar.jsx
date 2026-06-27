@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import {
   LayoutDashboard,
   CalendarDays,
@@ -8,15 +8,17 @@ import {
   Users,
   Zap,
   Trophy,
+  Globe2,
 } from 'lucide-react'
 
 const links = [
-  { to: '/',          icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/matches',   icon: CalendarDays,    label: 'Matches'   },
-  { to: '/leagues',   icon: Trophy,          label: 'Leagues'   },
-  { to: '/standings', icon: BarChart3,       label: 'Standings' },
-  { to: '/teams',     icon: Shield,          label: 'Teams'     },
-  { to: '/players',   icon: Users,           label: 'Players'   },
+  { to: '/',          icon: LayoutDashboard, label: 'Dashboard'  },
+  { to: '/worldcup',  icon: Globe2,          label: 'World Cup',  badge: '🔴' },
+  { to: '/matches',   icon: CalendarDays,    label: 'Matches'    },
+  { to: '/leagues',   icon: Trophy,          label: 'Leagues'    },
+  { to: '/standings', icon: BarChart3,       label: 'Standings'  },
+  { to: '/teams',     icon: Shield,          label: 'Teams'      },
+  { to: '/players',   icon: Users,           label: 'Players'    },
 ]
 
 export default function Sidebar() {
@@ -57,7 +59,7 @@ export default function Sidebar() {
 
       {/* Nav */}
       <nav style={{ flex: 1, padding: '0 12px', display: 'flex', flexDirection: 'column', gap: 4 }}>
-        {links.map(({ to, icon: Icon, label }) => (
+        {links.map(({ to, icon: Icon, label, badge }) => (
           <NavLink
             key={to}
             to={to}
@@ -85,6 +87,9 @@ export default function Sidebar() {
               >
                 <Icon size={17} strokeWidth={isActive ? 2.5 : 1.8} />
                 <span>{label}</span>
+                {badge && !isActive && (
+                  <span style={{ marginLeft: 'auto', fontSize: 8 }}>{badge}</span>
+                )}
                 {isActive && (
                   <motion.div
                     layoutId="sidebar-indicator"

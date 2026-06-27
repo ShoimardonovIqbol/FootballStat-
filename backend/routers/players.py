@@ -35,7 +35,7 @@ async def get_top_scorers(
     return await football_api(
         "players/topscorers",
         params={"league": league, "season": season},
-        ttl=600,
+        ttl=43200,
     )
 
 
@@ -47,7 +47,7 @@ async def get_top_assists(
     return await football_api(
         "players/topassists",
         params={"league": league, "season": season},
-        ttl=600,
+        ttl=43200,
     )
 
 
@@ -59,7 +59,7 @@ async def get_top_yellow_cards(
     return await football_api(
         "players/topyellowcards",
         params={"league": league, "season": season},
-        ttl=600,
+        ttl=43200,
     )
 
 
@@ -71,7 +71,7 @@ async def get_top_red_cards(
     return await football_api(
         "players/topredcards",
         params={"league": league, "season": season},
-        ttl=600,
+        ttl=43200,
     )
 
 
@@ -85,7 +85,7 @@ async def get_sidelined(
         params["player"] = player
     elif coach:
         params["coach"] = coach
-    return await football_api("sidelined", params=params, ttl=600)
+    return await football_api("sidelined", params=params, ttl=43200)
 
 
 @router.get("/{player_id}", summary="Full player profile with season statistics")

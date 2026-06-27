@@ -1,13 +1,13 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
-import { AnimatePresence, motion } from 'framer-motion'
-import Sidebar          from './components/layout/Sidebar'
-import MatrixBackground from './components/ui/MatrixBackground'
-import Home        from './pages/Home'
-import Matches     from './pages/Matches'
-import Standings   from './pages/Standings'
-import Teams       from './pages/Teams'
-import Players     from './pages/Players'
-import Leagues     from './pages/Leagues'
+import { AnimatePresence, motion } from 'motion/react'
+import Sidebar from './components/layout/Sidebar'
+import Home       from './pages/Home'
+import WorldCup   from './pages/WorldCup'
+import Matches    from './pages/Matches'
+import Standings  from './pages/Standings'
+import Teams      from './pages/Teams'
+import Players    from './pages/Players'
+import Leagues    from './pages/Leagues'
 import LeagueDetail from './pages/LeagueDetail'
 
 const pageVariants = {
@@ -34,6 +34,7 @@ function AppRoutes() {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/"            element={<PageWrapper><Home /></PageWrapper>} />
+        <Route path="/worldcup"    element={<PageWrapper><WorldCup /></PageWrapper>} />
         <Route path="/matches/*"   element={<PageWrapper><Matches /></PageWrapper>} />
         <Route path="/standings"   element={<PageWrapper><Standings /></PageWrapper>} />
         <Route path="/teams/*"     element={<PageWrapper><Teams /></PageWrapper>} />
@@ -48,10 +49,7 @@ function AppRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
-      {/* Matrix character background */}
-      <MatrixBackground />
-
-      {/* Floating orbs on top of matrix */}
+      {/* Floating orbs */}
       <div className="orb" style={{ width: 384, height: 384, background:'#7c3aed', top:'5%',  left:'18%', animationDelay:'0s'  }} />
       <div className="orb" style={{ width: 320, height: 320, background:'#4f46e5', top:'55%', right:'10%', animationDelay:'4s'  }} />
       <div className="orb" style={{ width: 256, height: 256, background:'#a855f7', top:'35%', left:'48%', animationDelay:'8s'  }} />
