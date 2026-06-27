@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 import { Radio, CalendarDays, List } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { matchesAPI } from '../services/api'

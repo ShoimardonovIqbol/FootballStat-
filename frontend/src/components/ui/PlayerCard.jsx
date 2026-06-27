@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { Link } from 'react-router-dom'
 
 const RANK_COLOR = ['#f59e0b', '#94a3b8', '#b45309']

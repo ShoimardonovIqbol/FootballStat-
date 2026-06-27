@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 import { Goal, Footprints, Square, CalendarDays, ArrowLeft } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { matchesAPI, playersAPI } from '../services/api'

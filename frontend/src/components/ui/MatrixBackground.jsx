@@ -9,7 +9,7 @@ export default function MatrixBackground() {
     const canvas = canvasRef.current
     const ctx    = canvas.getContext('2d')
 
-    const SIZE = 14  // grid cell size
+    const SIZE = 14  
     let cols, rows, grid
 
     const buildGrid = () => {

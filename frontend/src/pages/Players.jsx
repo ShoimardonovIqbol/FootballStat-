@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 import { Goal, Footprints } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { playersAPI } from '../services/api'

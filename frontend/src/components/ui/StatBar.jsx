@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 
 export default function StatBar({ label, home, away, homeColor = '#7c3aed', awayColor = '#4f46e5' }) {
   const total = (home ?? 0) + (away ?? 0)
