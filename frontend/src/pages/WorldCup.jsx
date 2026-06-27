@@ -16,16 +16,16 @@ function GroupCard({ group, label, index }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05, type: 'spring', stiffness: 260, damping: 22 }}
       style={{
-        background: 'rgba(16,16,42,0.75)',
-        border: '1px solid rgba(124,58,237,0.18)',
+        background: 'var(--surface)',
+        border: '1px solid var(--border)',
         borderRadius: 14,
         overflow: 'hidden',
       }}
     >
       <div style={{
         padding: '10px 14px',
-        background: 'linear-gradient(135deg,rgba(124,58,237,0.25),rgba(79,70,229,0.12))',
-        borderBottom: '1px solid rgba(124,58,237,0.18)',
+        background: 'linear-gradient(135deg,rgba(124,58,237,0.12),rgba(79,70,229,0.06))',
+        borderBottom: '1px solid var(--border)',
         display: 'flex', alignItems: 'center', gap: 8,
       }}>
         <div style={{
@@ -36,15 +36,15 @@ function GroupCard({ group, label, index }) {
         }}>
           {label}
         </div>
-        <span style={{ fontSize: 12, fontWeight: 700, color: '#c4b5fd' }}>Group {label}</span>
+        <span style={{ fontSize: 12, fontWeight: 700, color: '#7c3aed' }}>Group {label}</span>
       </div>
 
       <div style={{
         display: 'grid',
         gridTemplateColumns: '1fr 2rem 2rem 2rem 2rem 2rem 2.2rem',
         padding: '5px 12px',
-        fontSize: 10, fontWeight: 600, color: '#475569',
-        borderBottom: '1px solid rgba(255,255,255,0.04)',
+        fontSize: 10, fontWeight: 600, color: 'var(--text-3)',
+        borderBottom: '1px solid var(--border)',
       }}>
         <span>Team</span>
         <span style={{ textAlign: 'center' }}>P</span>
@@ -52,7 +52,7 @@ function GroupCard({ group, label, index }) {
         <span style={{ textAlign: 'center', color: '#f59e0b' }}>D</span>
         <span style={{ textAlign: 'center', color: '#f43f5e' }}>L</span>
         <span style={{ textAlign: 'center' }}>GD</span>
-        <span style={{ textAlign: 'center', color: '#a78bfa', fontWeight: 700 }}>Pts</span>
+        <span style={{ textAlign: 'center', color: '#7c3aed', fontWeight: 700 }}>Pts</span>
       </div>
 
       {group.map((row, i) => {
@@ -65,7 +65,7 @@ function GroupCard({ group, label, index }) {
               gridTemplateColumns: '1fr 2rem 2rem 2rem 2rem 2rem 2.2rem',
               alignItems: 'center',
               padding: '7px 12px',
-              borderBottom: i < group.length - 1 ? '1px solid rgba(255,255,255,0.03)' : 'none',
+              borderBottom: i < group.length - 1 ? '1px solid var(--border)' : 'none',
               borderLeft: '3px solid ' + (isQ ? '#7c3aed' : 'transparent'),
               background: isQ ? 'rgba(124,58,237,0.04)' : 'transparent',
             }}
@@ -75,19 +75,19 @@ function GroupCard({ group, label, index }) {
                 onError={e => { e.target.style.opacity = 0.2 }} />
               <span style={{
                 fontSize: 12, fontWeight: isQ ? 600 : 400,
-                color: isQ ? '#e2e8f0' : '#94a3b8',
+                color: isQ ? 'var(--text-1)' : 'var(--text-2)',
                 overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
               }}>
                 {row.team.name}
               </span>
             </div>
-            <span style={{ textAlign: 'center', fontSize: 11, color: '#64748b' }}>{row.all.played}</span>
+            <span style={{ textAlign: 'center', fontSize: 11, color: 'var(--text-2)' }}>{row.all.played}</span>
             <span style={{ textAlign: 'center', fontSize: 11, color: '#22d47a' }}>{row.all.win}</span>
             <span style={{ textAlign: 'center', fontSize: 11, color: '#f59e0b' }}>{row.all.draw}</span>
             <span style={{ textAlign: 'center', fontSize: 11, color: '#f43f5e' }}>{row.all.lose}</span>
             <span style={{
               textAlign: 'center', fontSize: 11, fontWeight: 600,
-              color: row.goalsDiff > 0 ? '#22d47a' : row.goalsDiff < 0 ? '#f43f5e' : '#64748b',
+              color: row.goalsDiff > 0 ? '#22d47a' : row.goalsDiff < 0 ? '#f43f5e' : 'var(--text-2)',
             }}>
               {row.goalsDiff > 0 ? '+' : ''}{row.goalsDiff}
             </span>
@@ -95,9 +95,10 @@ function GroupCard({ group, label, index }) {
               <div style={{
                 minWidth: 22, height: 20, borderRadius: 5, padding: '0 4px',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 11, fontWeight: 800, color: '#fff',
-                background: isQ ? 'linear-gradient(135deg,rgba(124,58,237,0.4),rgba(79,70,229,0.4))' : 'rgba(255,255,255,0.05)',
-                border: isQ ? '1px solid rgba(124,58,237,0.5)' : '1px solid rgba(255,255,255,0.07)',
+                fontSize: 11, fontWeight: 800,
+                color: isQ ? '#fff' : 'var(--text-1)',
+                background: isQ ? 'linear-gradient(135deg,rgba(124,58,237,0.4),rgba(79,70,229,0.4))' : 'var(--surface2)',
+                border: isQ ? '1px solid rgba(124,58,237,0.5)' : '1px solid var(--border)',
               }}>
                 {row.points}
               </div>
@@ -108,7 +109,7 @@ function GroupCard({ group, label, index }) {
 
       <div style={{ padding: '6px 12px', display: 'flex', alignItems: 'center', gap: 5 }}>
         <div style={{ width: 8, height: 2, background: '#7c3aed', borderRadius: 1 }} />
-        <span style={{ fontSize: 9, color: '#475569' }}>Qualify to Round of 32</span>
+        <span style={{ fontSize: 9, color: 'var(--text-3)' }}>Qualify to Round of 32</span>
       </div>
     </motion.div>
   )
@@ -134,11 +135,11 @@ function FixtureRow({ match }) {
       alignItems: 'center',
       gap: 12,
       padding: '10px 16px',
-      borderBottom: '1px solid rgba(124,58,237,0.06)',
+      borderBottom: '1px solid var(--border)',
       background: isLive ? 'rgba(34,212,122,0.03)' : 'transparent',
     }}>
       <div style={{ textAlign: 'center' }}>
-        <span style={{ fontSize: 11, fontWeight: 700, color: isLive ? '#22d47a' : isDone ? '#475569' : '#94a3b8' }}>
+        <span style={{ fontSize: 11, fontWeight: 700, color: isLive ? '#22d47a' : isDone ? 'var(--text-3)' : 'var(--text-2)' }}>
           {timeLabel}
         </span>
         {isLive && (
@@ -147,7 +148,7 @@ function FixtureRow({ match }) {
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'flex-end' }}>
-        <span style={{ fontSize: 12, fontWeight: 600, color: '#e2e8f0', textAlign: 'right' }}>
+        <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-1)', textAlign: 'right' }}>
           {teams.home.name}
         </span>
         <img src={teams.home.logo} alt="" style={{ width: 22, height: 22, objectFit: 'contain' }}
@@ -156,9 +157,9 @@ function FixtureRow({ match }) {
 
       <div style={{
         padding: '4px 10px', borderRadius: 8, minWidth: 44, textAlign: 'center',
-        background: isDone || isLive ? 'rgba(124,58,237,0.15)' : 'rgba(255,255,255,0.04)',
-        border: '1px solid ' + (isDone || isLive ? 'rgba(124,58,237,0.35)' : 'rgba(255,255,255,0.08)'),
-        fontSize: 13, fontWeight: 800, color: '#fff',
+        background: isDone || isLive ? 'rgba(124,58,237,0.12)' : 'var(--surface2)',
+        border: '1px solid ' + (isDone || isLive ? 'rgba(124,58,237,0.35)' : 'var(--border)'),
+        fontSize: 13, fontWeight: 800, color: 'var(--text-1)',
       }}>
         {isDone || isLive ? (goals.home ?? 0) + ' : ' + (goals.away ?? 0) : 'vs'}
       </div>
@@ -166,7 +167,7 @@ function FixtureRow({ match }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <img src={teams.away.logo} alt="" style={{ width: 22, height: 22, objectFit: 'contain' }}
           onError={e => { e.target.style.opacity = 0.2 }} />
-        <span style={{ fontSize: 12, fontWeight: 600, color: '#e2e8f0' }}>{teams.away.name}</span>
+        <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-1)' }}>{teams.away.name}</span>
       </div>
     </div>
   )
@@ -175,20 +176,20 @@ function FixtureRow({ match }) {
 function GroupSkeleton() {
   return (
     <div style={{
-      background: 'rgba(16,16,42,0.75)',
-      border: '1px solid rgba(124,58,237,0.18)',
+      background: 'var(--surface)',
+      border: '1px solid var(--border)',
       borderRadius: 14, overflow: 'hidden',
     }}>
-      <div style={{ height: 44, background: 'rgba(124,58,237,0.1)', borderBottom: '1px solid rgba(124,58,237,0.18)' }} />
+      <div style={{ height: 44, background: 'rgba(124,58,237,0.06)', borderBottom: '1px solid var(--border)' }} />
       {[1,2,3,4].map(i => (
         <div key={i} style={{
           height: 36, padding: '0 12px',
-          borderBottom: '1px solid rgba(255,255,255,0.03)',
+          borderBottom: '1px solid var(--border)',
           display: 'flex', alignItems: 'center', gap: 8,
         }}>
-          <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
-          <div style={{ flex: 1, height: 10, borderRadius: 4, background: 'rgba(255,255,255,0.06)' }} />
-          <div style={{ width: 22, height: 20, borderRadius: 5, background: 'rgba(124,58,237,0.12)' }} />
+          <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'var(--surface2)' }} />
+          <div style={{ flex: 1, height: 10, borderRadius: 4, background: 'var(--surface2)' }} />
+          <div style={{ width: 22, height: 20, borderRadius: 5, background: 'rgba(124,58,237,0.1)' }} />
         </div>
       ))}
     </div>
@@ -230,26 +231,26 @@ export default function WorldCup() {
           style={{
             borderRadius: 20, overflow: 'hidden', position: 'relative',
             padding: '28px 32px',
-            background: 'linear-gradient(135deg,rgba(124,58,237,0.2),rgba(79,70,229,0.1),rgba(168,85,247,0.08))',
-            border: '1px solid rgba(124,58,237,0.28)',
+            background: 'linear-gradient(135deg,rgba(124,58,237,0.1),rgba(79,70,229,0.06),rgba(168,85,247,0.04))',
+            border: '1px solid rgba(124,58,237,0.2)',
           }}
         >
-          <div style={{ position:'absolute',top:-40,left:-20,width:200,height:200,borderRadius:'50%',background:'#7c3aed',opacity:0.12,filter:'blur(48px)',pointerEvents:'none' }} />
-          <div style={{ position:'absolute',bottom:-30,right:-20,width:160,height:160,borderRadius:'50%',background:'#a855f7',opacity:0.1,filter:'blur(36px)',pointerEvents:'none' }} />
+          <div style={{ position:'absolute',top:-40,left:-20,width:200,height:200,borderRadius:'50%',background:'#7c3aed',opacity:0.08,filter:'blur(48px)',pointerEvents:'none' }} />
+          <div style={{ position:'absolute',bottom:-30,right:-20,width:160,height:160,borderRadius:'50%',background:'#a855f7',opacity:0.06,filter:'blur(36px)',pointerEvents:'none' }} />
 
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 20 }}>
             <div style={{
               width: 64, height: 64, borderRadius: 18, flexShrink: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: 'linear-gradient(135deg,#7c3aed,#4f46e5)',
-              boxShadow: '0 0 28px rgba(124,58,237,0.5)',
+              boxShadow: '0 0 28px rgba(124,58,237,0.4)',
             }}>
               <Trophy size={28} color="#fff" />
             </div>
 
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <h1 style={{ fontSize: 26, fontWeight: 900, color: '#fff', margin: 0 }}>
+                <h1 style={{ fontSize: 26, fontWeight: 900, color: 'var(--text-1)', margin: 0 }}>
                   FIFA World Cup
                 </h1>
                 <span style={{
@@ -259,14 +260,14 @@ export default function WorldCup() {
                   padding: '2px 10px', borderRadius: 999,
                 }}>Qatar 2022</span>
               </div>
-              <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>
+              <p style={{ fontSize: 13, color: 'var(--text-2)', margin: 0 }}>
                 Qatar &nbsp;|&nbsp; 32 Teams &nbsp;|&nbsp; 8 Groups &nbsp;|&nbsp; November–December 2022
               </p>
             </div>
 
             <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
               <img src={'https://flagcdn.com/w40/qa.png'} alt="Qatar"
-                style={{ width: 34, height: 22, objectFit: 'cover', borderRadius: 4, border: '1px solid rgba(255,255,255,0.15)' }} />
+                style={{ width: 34, height: 22, objectFit: 'cover', borderRadius: 4, border: '1px solid var(--border)' }} />
             </div>
           </div>
         </motion.div>
@@ -285,9 +286,11 @@ export default function WorldCup() {
                   display: 'flex', alignItems: 'center', gap: 7,
                   padding: '8px 18px', borderRadius: 12,
                   fontSize: 13, fontWeight: 600,
-                  cursor: 'pointer', border: 'none', outline: 'none',
-                  background: active ? 'linear-gradient(135deg,#7c3aed,#4f46e5)' : 'rgba(21,21,58,0.8)',
-                  color: active ? '#fff' : '#94a3b8',
+                  cursor: 'pointer',
+                  border: active ? 'none' : '1px solid var(--border)',
+                  outline: 'none',
+                  background: active ? 'linear-gradient(135deg,#7c3aed,#4f46e5)' : 'var(--surface)',
+                  color: active ? '#fff' : 'var(--text-2)',
                   boxShadow: active ? '0 0 18px rgba(124,58,237,0.4)' : 'none',
                   transition: 'background 0.2s, color 0.2s',
                 }}
@@ -314,7 +317,7 @@ export default function WorldCup() {
             <p style={{ fontSize: 16, fontWeight: 700, color: '#f43f5e', margin: '0 0 8px' }}>
               API лимит тамом шуд
             </p>
-            <p style={{ fontSize: 13, color: '#64748b', margin: 0 }}>
+            <p style={{ fontSize: 13, color: 'var(--text-2)', margin: 0 }}>
               Маълумот фардо дастрас мешавад — соати 03:00 вақти Тоҷикистон
             </p>
           </motion.div>
@@ -351,26 +354,26 @@ export default function WorldCup() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               style={{
-                background: 'rgba(16,16,42,0.75)',
-                border: '1px solid rgba(124,58,237,0.15)',
+                background: 'var(--surface)',
+                border: '1px solid var(--border)',
                 borderRadius: 16, overflow: 'hidden',
               }}
             >
               {loading && Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} style={{
                   height: 52, padding: '0 16px',
-                  borderBottom: '1px solid rgba(124,58,237,0.06)',
+                  borderBottom: '1px solid var(--border)',
                   display: 'flex', alignItems: 'center', gap: 12,
                 }}>
-                  <div style={{ width: 40, height: 10, borderRadius: 4, background: 'rgba(255,255,255,0.05)' }} />
-                  <div style={{ flex: 1, height: 10, borderRadius: 4, background: 'rgba(255,255,255,0.05)' }} />
-                  <div style={{ width: 50, height: 24, borderRadius: 8, background: 'rgba(124,58,237,0.12)' }} />
-                  <div style={{ flex: 1, height: 10, borderRadius: 4, background: 'rgba(255,255,255,0.05)' }} />
+                  <div style={{ width: 40, height: 10, borderRadius: 4, background: 'var(--surface2)' }} />
+                  <div style={{ flex: 1, height: 10, borderRadius: 4, background: 'var(--surface2)' }} />
+                  <div style={{ width: 50, height: 24, borderRadius: 8, background: 'rgba(124,58,237,0.1)' }} />
+                  <div style={{ flex: 1, height: 10, borderRadius: 4, background: 'var(--surface2)' }} />
                 </div>
               ))}
               {!loading && fixtures.length === 0 && (
                 <div style={{ padding: '52px 0', textAlign: 'center' }}>
-                  <p style={{ color: '#475569', fontSize: 13 }}>Мусобиқаҳо дастрас нестанд</p>
+                  <p style={{ color: 'var(--text-2)', fontSize: 13 }}>Мусобиқаҳо дастрас нестанд</p>
                 </div>
               )}
               {!loading && fixtures.map((m, i) => (

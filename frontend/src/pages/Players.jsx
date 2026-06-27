@@ -54,13 +54,13 @@ export default function Players() {
                 fontSize: 13,
                 fontWeight: 600,
                 cursor: 'pointer',
-                border: 'none',
+                border: '1px solid ' + (league === l.id ? 'transparent' : 'var(--border)'),
                 outline: 'none',
                 transition: 'all 0.2s',
                 background: league === l.id
                   ? 'linear-gradient(135deg,#7c3aed,#4f46e5)'
-                  : 'rgba(21,21,58,0.8)',
-                color: league === l.id ? '#fff' : '#94a3b8',
+                  : 'var(--surface)',
+                color: league === l.id ? '#fff' : 'var(--text-2)',
                 boxShadow: league === l.id ? '0 0 16px rgba(124,58,237,0.4)' : 'none',
               }}
             >
@@ -82,12 +82,12 @@ export default function Players() {
                 fontSize: 13,
                 fontWeight: 600,
                 cursor: 'pointer',
-                border: '1px solid ' + (tab === key ? 'transparent' : 'rgba(124,58,237,0.2)'),
+                border: '1px solid ' + (tab === key ? 'transparent' : 'var(--border)'),
                 outline: 'none',
                 background: tab === key
                   ? 'linear-gradient(135deg,#7c3aed,#4f46e5)'
-                  : 'rgba(21,21,58,0.7)',
-                color: tab === key ? '#fff' : '#64748b',
+                  : 'var(--surface)',
+                color: tab === key ? '#fff' : 'var(--text-2)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 8,
@@ -111,9 +111,9 @@ export default function Players() {
               justifyContent: 'center',
               gap: 24,
               padding: '32px 0 16px',
-              background: 'rgba(16,16,42,0.5)',
+              background: 'var(--surface)',
               borderRadius: 20,
-              border: '1px solid rgba(124,58,237,0.12)',
+              border: '1px solid var(--border)',
             }}
           >
             {PODIUM.map(({ pos, size, barH, medal, border }) => {
@@ -155,7 +155,7 @@ export default function Players() {
                   <p style={{
                     fontSize: 12,
                     fontWeight: 700,
-                    color: '#f1f5f9',
+                    color: 'var(--text-1)',
                     textAlign: 'center',
                     maxWidth: 100,
                     overflow: 'hidden',
@@ -185,8 +185,8 @@ export default function Players() {
 
         {/* Full ranked list */}
         <div style={{
-          background: 'rgba(16,16,42,0.75)',
-          border: '1px solid rgba(124,58,237,0.15)',
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
           borderRadius: 16,
           overflow: 'hidden',
         }}>
@@ -195,11 +195,11 @@ export default function Players() {
             display: 'grid',
             gridTemplateColumns: '2rem 3rem 1fr 4rem',
             padding: '10px 16px',
-            borderBottom: '1px solid rgba(124,58,237,0.12)',
-            background: 'rgba(124,58,237,0.06)',
+            borderBottom: '1px solid var(--border)',
+            background: 'var(--surface2)',
           }}>
             {['#', '', 'Player', currentStat === 'goals' ? 'Goals' : 'Assists'].map((h, i) => (
-              <span key={i} style={{ fontSize: 11, fontWeight: 600, color: '#64748b', textAlign: i === 3 ? 'center' : 'left' }}>
+              <span key={i} style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-3)', textAlign: i === 3 ? 'center' : 'left' }}>
                 {h}
               </span>
             ))}
@@ -226,18 +226,18 @@ export default function Players() {
                     gridTemplateColumns: '2rem 3rem 1fr 4rem',
                     alignItems: 'center',
                     padding: '10px 16px',
-                    borderBottom: '1px solid rgba(124,58,237,0.07)',
+                    borderBottom: '1px solid var(--border)',
                     cursor: 'pointer',
                     transition: 'background 0.15s',
                   }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
+                  onMouseEnter={e => e.currentTarget.style.background = 'var(--surface2)'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
                   {/* Rank */}
                   <span style={{
                     fontSize: 12,
                     fontWeight: 700,
-                    color: i < 3 ? rankColors[i] : '#475569',
+                    color: i < 3 ? rankColors[i] : 'var(--text-3)',
                   }}>
                     {i + 1}
                   </span>
@@ -262,14 +262,14 @@ export default function Players() {
 
                   {/* Name + Team */}
                   <div style={{ overflow: 'hidden', paddingLeft: 8 }}>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: '#f1f5f9', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-1)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {item.player.name}
                     </p>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
                       {stats?.team?.logo && (
                         <img src={stats.team.logo} alt="" style={{ width: 13, height: 13, objectFit: 'contain' }} />
                       )}
-                      <span style={{ fontSize: 11, color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <span style={{ fontSize: 11, color: 'var(--text-2)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {stats?.team?.name}
                       </span>
                     </div>

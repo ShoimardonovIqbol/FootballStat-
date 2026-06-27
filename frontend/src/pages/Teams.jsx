@@ -39,15 +39,15 @@ function TeamCard({ team, venue, leagueName, index }) {
               <div style={{
                 width: 72, height: 72, borderRadius: 18,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: 'rgba(124,58,237,0.15)',
-                border: '1px solid rgba(124,58,237,0.35)',
+                background: 'rgba(124,58,237,0.1)',
+                border: '1px solid rgba(124,58,237,0.3)',
                 padding: 12,
               }}>
                 <img src={team.logo} alt={team.name}
                   style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                   onError={e => { e.target.style.opacity = 0.3 }} />
               </div>
-              <p style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0', textAlign: 'center', padding: '0 10px' }}>
+              <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-1)', textAlign: 'center', padding: '0 10px' }}>
                 {team.name}
               </p>
               <p style={{ fontSize: 10, color: '#a78bfa', fontWeight: 600, letterSpacing: '0.05em' }}>
@@ -160,13 +160,13 @@ function SkeletonCard() {
     <div className="team-flip-wrap">
       <div style={{
         width: '100%', height: '100%',
-        background: 'rgba(16,16,42,0.75)',
-        border: '1px solid rgba(124,58,237,0.15)',
+        background: 'var(--surface)',
+        border: '1px solid var(--border)',
         borderRadius: 12,
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center', gap: 10,
       }}>
-        <div style={{ width: 64, height: 64, borderRadius: 16, background: 'rgba(124,58,237,0.1)' }} className="shimmer" />
+        <div style={{ width: 64, height: 64, borderRadius: 16, background: 'rgba(124,58,237,0.08)' }} className="shimmer" />
         <div style={{ width: 90, height: 10, borderRadius: 5 }} className="shimmer" />
         <div style={{ width: 60, height: 8, borderRadius: 5 }} className="shimmer" />
       </div>
@@ -199,11 +199,13 @@ export default function Teams() {
                   display: 'flex', alignItems: 'center', gap: 7,
                   padding: '8px 16px', borderRadius: 12,
                   fontSize: 13, fontWeight: 600,
-                  cursor: 'pointer', border: 'none', outline: 'none',
+                  cursor: 'pointer',
+                  border: active ? 'none' : '1px solid var(--border)',
+                  outline: 'none',
                   background: active
                     ? 'linear-gradient(135deg,#7c3aed,#4f46e5)'
-                    : 'rgba(21,21,58,0.8)',
-                  color: active ? '#fff' : '#94a3b8',
+                    : 'var(--surface)',
+                  color: active ? '#fff' : 'var(--text-2)',
                   boxShadow: active ? '0 0 18px rgba(124,58,237,0.4)' : 'none',
                   transition: 'background 0.2s, color 0.2s',
                 }}

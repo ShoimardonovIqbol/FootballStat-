@@ -9,11 +9,13 @@ import {
   Zap,
   Trophy,
   Globe2,
+  Tv,
 } from 'lucide-react'
 
 const links = [
   { to: '/',          icon: LayoutDashboard, label: 'Dashboard'  },
   { to: '/worldcup',  icon: Globe2,          label: 'World Cup',  badge: '🔴' },
+  { to: '/watch',     icon: Tv,              label: 'Watch Live', live: true   },
   { to: '/matches',   icon: CalendarDays,    label: 'Matches'    },
   { to: '/leagues',   icon: Trophy,          label: 'Leagues'    },
   { to: '/standings', icon: BarChart3,       label: 'Standings'  },
@@ -36,9 +38,9 @@ export default function Sidebar() {
         zIndex: 50,
         display: 'flex',
         flexDirection: 'column',
-        background: 'rgba(8,8,23,0.92)',
+        background: 'var(--sidebar-bg)',
         backdropFilter: 'blur(24px)',
-        borderRight: '1px solid rgba(124,58,237,0.15)',
+        borderRight: '1px solid var(--border)',
       }}
     >
       {/* Logo */}
@@ -52,14 +54,14 @@ export default function Sidebar() {
           <Zap size={18} color="#fff" fill="#fff" />
         </div>
         <div>
-          <p style={{ fontWeight: 700, color: '#fff', fontSize: 14, lineHeight: 1.2 }}>FootballStat</p>
-          <p style={{ fontSize: 11, color: '#a78bfa', marginTop: 2 }}>Live · Stats · More</p>
+          <p style={{ fontWeight: 700, color: 'var(--text-1)', fontSize: 14, lineHeight: 1.2 }}>FootballStat</p>
+          <p style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 2 }}>Live · Stats · More</p>
         </div>
       </div>
 
       {/* Nav */}
       <nav style={{ flex: 1, padding: '0 12px', display: 'flex', flexDirection: 'column', gap: 4 }}>
-        {links.map(({ to, icon: Icon, label, badge }) => (
+        {links.map(({ to, icon: Icon, label, badge, live }) => (
           <NavLink
             key={to}
             to={to}
@@ -79,16 +81,26 @@ export default function Sidebar() {
                 background: isActive
                   ? 'linear-gradient(135deg,#7c3aed,#4f46e5)'
                   : 'transparent',
-                color: isActive ? '#fff' : '#94a3b8',
+                color: isActive ? '#fff' : 'var(--text-2)',
                 boxShadow: isActive ? '0 0 16px rgba(124,58,237,0.35)' : 'none',
               }}
-              onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
+              onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'var(--surface2)' }}
               onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent' }}
               >
                 <Icon size={17} strokeWidth={isActive ? 2.5 : 1.8} />
                 <span>{label}</span>
                 {badge && !isActive && (
                   <span style={{ marginLeft: 'auto', fontSize: 8 }}>{badge}</span>
+                )}
+                {live && !isActive && (
+                  <span style={{
+                    marginLeft: 'auto',
+                    padding: '2px 6px', borderRadius: 6,
+                    background: 'rgba(239,68,68,0.15)',
+                    border: '1px solid rgba(239,68,68,0.35)',
+                    fontSize: 9, fontWeight: 800, color: '#ef4444',
+                    letterSpacing: '0.06em',
+                  }}>LIVE</span>
                 )}
                 {isActive && (
                   <motion.div
@@ -114,10 +126,10 @@ export default function Sidebar() {
           borderRadius: 12,
           padding: 12,
           textAlign: 'center',
-          background: 'rgba(124,58,237,0.1)',
-          border: '1px solid rgba(124,58,237,0.2)',
+          background: 'var(--surface2)',
+          border: '1px solid var(--border)',
         }}>
-          <p style={{ fontSize: 11, color: '#64748b' }}>Powered by</p>
+          <p style={{ fontSize: 11, color: 'var(--text-3)' }}>Powered by</p>
           <p style={{ fontSize: 11, fontWeight: 700, background: 'linear-gradient(135deg,#a78bfa,#818cf8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>API-Football</p>
         </div>
       </div>

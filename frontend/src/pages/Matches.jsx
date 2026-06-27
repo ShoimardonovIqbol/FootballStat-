@@ -52,11 +52,11 @@ export default function Matches() {
                 fontSize: 13,
                 fontWeight: 600,
                 cursor: 'pointer',
-                color: tab === key ? '#fff' : '#64748b',
+                color: tab === key ? '#fff' : 'var(--text-2)',
                 background: tab === key
                   ? 'linear-gradient(135deg,#7c3aed,#4f46e5)'
-                  : 'rgba(21,21,58,0.6)',
-                border: '1px solid ' + (tab === key ? 'transparent' : 'rgba(124,58,237,0.15)'),
+                  : 'var(--surface)',
+                border: '1px solid ' + (tab === key ? 'transparent' : 'var(--border)'),
                 display: 'flex',
                 alignItems: 'center',
                 gap: 8,
@@ -95,8 +95,8 @@ export default function Matches() {
             {source.loading
               ? [0,1,2].map(i => (
                 <div key={i} style={{
-                  background: 'rgba(16,16,42,0.7)',
-                  border: '1px solid rgba(124,58,237,0.12)',
+                  background: 'var(--surface)',
+                  border: '1px solid var(--border)',
                   borderRadius: 16,
                   padding: 16,
                   display: 'flex',
@@ -109,8 +109,8 @@ export default function Matches() {
               : grouped.length === 0
               ? (
                 <div style={{
-                  background: 'rgba(16,16,42,0.7)',
-                  border: '1px solid rgba(124,58,237,0.12)',
+                  background: 'var(--surface)',
+                  border: '1px solid var(--border)',
                   borderRadius: 16,
                   padding: '64px 0',
                   display: 'flex',
@@ -118,14 +118,14 @@ export default function Matches() {
                   alignItems: 'center',
                   gap: 12,
                 }}>
-                  <CalendarDays size={40} style={{ color: '#334155' }} />
-                  <p style={{ color: '#64748b', fontWeight: 500 }}>No matches found</p>
+                  <CalendarDays size={40} style={{ color: 'var(--text-4)' }} />
+                  <p style={{ color: 'var(--text-2)', fontWeight: 500 }}>No matches found</p>
                 </div>
               )
               : grouped.map(({ league, fixtures }) => (
                 <div key={league.id} style={{
-                  background: 'rgba(16,16,42,0.7)',
-                  border: '1px solid rgba(124,58,237,0.12)',
+                  background: 'var(--surface)',
+                  border: '1px solid var(--border)',
                   borderRadius: 16,
                   padding: 16,
                   overflow: 'hidden',
@@ -137,12 +137,12 @@ export default function Matches() {
                     gap: 10,
                     marginBottom: 14,
                     paddingBottom: 12,
-                    borderBottom: '1px solid rgba(124,58,237,0.12)',
+                    borderBottom: '1px solid var(--border)',
                   }}>
                     <img src={league.logo || league.flag} alt="" style={{ width: 24, height: 24, objectFit: 'contain' }} />
                     <div>
-                      <p style={{ fontSize: 13, fontWeight: 700, color: '#f1f5f9' }}>{league.name}</p>
-                      <p style={{ fontSize: 11, color: '#64748b', marginTop: 1 }}>{league.country} · {league.round}</p>
+                      <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-1)' }}>{league.name}</p>
+                      <p style={{ fontSize: 11, color: 'var(--text-2)', marginTop: 1 }}>{league.country} · {league.round}</p>
                     </div>
                     <span style={{
                       marginLeft: 'auto',

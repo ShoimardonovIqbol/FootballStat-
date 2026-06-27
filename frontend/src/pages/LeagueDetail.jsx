@@ -17,7 +17,6 @@ const TABS = [
 
 const RANK_COLOR = ['#f59e0b', '#94a3b8', '#b45309']
 
-/* Static league metadata so header always shows even if API is down */
 const LEAGUE_META = {
   39:  { name: 'Premier League',        country: 'England', flag: 'https://media.api-sports.io/flags/gb.svg' },
   140: { name: 'La Liga',               country: 'Spain',   flag: 'https://media.api-sports.io/flags/es.svg' },
@@ -44,14 +43,14 @@ function StatRow({ item, rank, statKey }) {
         gridTemplateColumns: '2rem 3rem 1fr 4rem',
         alignItems: 'center',
         padding: '10px 16px',
-        borderBottom: '1px solid rgba(124,58,237,0.07)',
+        borderBottom: '1px solid var(--border)',
         transition: 'background 0.15s',
         cursor: 'pointer',
       }}
-      onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
+      onMouseEnter={e => e.currentTarget.style.background = 'var(--surface2)'}
       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
     >
-      <span style={{ fontSize: 12, fontWeight: 700, color: rank <= 3 ? RANK_COLOR[rank - 1] : '#475569' }}>
+      <span style={{ fontSize: 12, fontWeight: 700, color: rank <= 3 ? RANK_COLOR[rank - 1] : 'var(--text-3)' }}>
         {rank}
       </span>
 
@@ -65,14 +64,14 @@ function StatRow({ item, rank, statKey }) {
       />
 
       <div style={{ paddingLeft: 10, overflow: 'hidden' }}>
-        <p style={{ fontSize: 13, fontWeight: 600, color: '#f1f5f9', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>
+        <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-1)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>
           {item?.player?.name}
         </p>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 2 }}>
           {stats?.team?.logo && (
             <img src={stats.team.logo} alt="" style={{ width: 13, height: 13, objectFit: 'contain' }} />
           )}
-          <span style={{ fontSize: 11, color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <span style={{ fontSize: 11, color: 'var(--text-2)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {stats?.team?.name}
           </span>
         </div>
@@ -101,12 +100,12 @@ function EmptyState({ message }) {
   return (
     <div style={{
       padding: '56px 0', textAlign: 'center',
-      background: 'rgba(16,16,42,0.7)',
-      border: '1px solid rgba(124,58,237,0.12)',
+      background: 'var(--surface)',
+      border: '1px solid var(--border)',
       borderRadius: 16,
     }}>
-      <CalendarDays size={36} style={{ color: '#334155', margin: '0 auto 10px', display: 'block' }} />
-      <p style={{ color: '#64748b', fontSize: 14 }}>{message}</p>
+      <CalendarDays size={36} style={{ color: 'var(--text-4)', margin: '0 auto 10px', display: 'block' }} />
+      <p style={{ color: 'var(--text-2)', fontSize: 14 }}>{message}</p>
     </div>
   )
 }
@@ -158,8 +157,8 @@ export default function LeagueDetail() {
             gap: 20,
             padding: '20px 24px',
             borderRadius: 20,
-            background: 'linear-gradient(135deg, rgba(124,58,237,0.15), rgba(79,70,229,0.08))',
-            border: '1px solid rgba(124,58,237,0.25)',
+            background: 'linear-gradient(135deg, rgba(124,58,237,0.08), rgba(79,70,229,0.04))',
+            border: '1px solid rgba(124,58,237,0.2)',
             position: 'relative',
             overflow: 'hidden',
           }}
@@ -167,7 +166,7 @@ export default function LeagueDetail() {
           <div style={{
             position: 'absolute', top: -40, right: -40,
             width: 200, height: 200, borderRadius: '50%',
-            background: '#7c3aed', opacity: 0.07, filter: 'blur(40px)',
+            background: '#7c3aed', opacity: 0.06, filter: 'blur(40px)',
             pointerEvents: 'none',
           }} />
 
@@ -176,15 +175,15 @@ export default function LeagueDetail() {
             <div style={{
               width: 36, height: 36, borderRadius: 10,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: 'rgba(255,255,255,0.06)',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: 'var(--surface2)',
+              border: '1px solid var(--border)',
               cursor: 'pointer',
               transition: 'background 0.15s',
             }}
-            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.12)'}
-            onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(124,58,237,0.12)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'var(--surface2)'}
             >
-              <ArrowLeft size={16} style={{ color: '#94a3b8' }} />
+              <ArrowLeft size={16} style={{ color: 'var(--text-2)' }} />
             </div>
           </Link>
 
@@ -192,8 +191,8 @@ export default function LeagueDetail() {
           <div style={{
             width: 64, height: 64, borderRadius: 16, flexShrink: 0,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.1)',
+            background: 'var(--surface2)',
+            border: '1px solid var(--border)',
             padding: 10,
           }}>
             <img
@@ -206,7 +205,7 @@ export default function LeagueDetail() {
 
           {/* Name + country */}
           <div>
-            <h1 style={{ fontSize: 22, fontWeight: 800, color: '#fff', margin: 0 }}>
+            <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-1)', margin: 0 }}>
               {meta.name}
             </h1>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
@@ -218,10 +217,10 @@ export default function LeagueDetail() {
                   onError={e => { e.target.style.display = 'none' }}
                 />
               )}
-              <span style={{ fontSize: 13, color: '#94a3b8' }}>{meta.country}</span>
+              <span style={{ fontSize: 13, color: 'var(--text-2)' }}>{meta.country}</span>
               <span style={{
                 fontSize: 11, fontWeight: 600, color: '#a78bfa',
-                background: 'rgba(124,58,237,0.2)',
+                background: 'rgba(124,58,237,0.12)',
                 padding: '2px 10px', borderRadius: 999,
               }}>
                 Season 2024/25
@@ -243,9 +242,9 @@ export default function LeagueDetail() {
                 outline: 'none',
                 background: tab === key
                   ? 'linear-gradient(135deg,#7c3aed,#4f46e5)'
-                  : 'rgba(21,21,58,0.7)',
-                color: tab === key ? '#fff' : '#64748b',
-                border: '1px solid ' + (tab === key ? 'transparent' : 'rgba(124,58,237,0.2)'),
+                  : 'var(--surface)',
+                color: tab === key ? '#fff' : 'var(--text-2)',
+                border: '1px solid ' + (tab === key ? 'transparent' : 'var(--border)'),
                 boxShadow: tab === key ? '0 0 16px rgba(124,58,237,0.35)' : 'none',
                 transition: 'all 0.2s',
               }}
@@ -280,8 +279,8 @@ export default function LeagueDetail() {
               </div>
             ) : (
               <div style={{
-                background: 'rgba(16,16,42,0.75)',
-                border: '1px solid rgba(124,58,237,0.15)',
+                background: 'var(--surface)',
+                border: '1px solid var(--border)',
                 borderRadius: 16,
                 overflow: 'hidden',
               }}>
@@ -290,9 +289,9 @@ export default function LeagueDetail() {
                   display: 'grid',
                   gridTemplateColumns: '2rem 3rem 1fr 4rem',
                   padding: '10px 16px',
-                  fontSize: 11, fontWeight: 600, color: '#64748b',
-                  borderBottom: '1px solid rgba(124,58,237,0.12)',
-                  background: 'rgba(124,58,237,0.05)',
+                  fontSize: 11, fontWeight: 600, color: 'var(--text-3)',
+                  borderBottom: '1px solid var(--border)',
+                  background: 'var(--surface2)',
                 }}>
                   <span>#</span>
                   <span />
@@ -307,7 +306,7 @@ export default function LeagueDetail() {
                   : tabData[tab].length === 0
                   ? (
                     <div style={{ padding: '40px 0', textAlign: 'center' }}>
-                      <p style={{ color: '#64748b', fontSize: 13 }}>No data available</p>
+                      <p style={{ color: 'var(--text-2)', fontSize: 13 }}>No data available</p>
                     </div>
                   )
                   : tabData[tab].map((item, i) => (

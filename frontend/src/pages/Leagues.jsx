@@ -13,7 +13,6 @@ const LEAGUES = [
   { id: 3,   name: 'UEFA Europa League',    country: 'World',   flag: null                                       },
 ]
 
-/* Stagger container + card variants */
 const container = {
   hidden: {},
   show: {
@@ -42,7 +41,7 @@ export default function Leagues() {
           transition={{ duration: 0.4 }}
           style={{ marginBottom: 20 }}
         >
-          <h2 style={{ fontSize: 13, fontWeight: 700, color: '#64748b', letterSpacing: '0.08em', textTransform: 'uppercase', margin: 0 }}>
+          <h2 style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)', letterSpacing: '0.08em', textTransform: 'uppercase', margin: 0 }}>
             {LEAGUES.length} Competitions
           </h2>
         </motion.div>
@@ -67,17 +66,16 @@ export default function Leagues() {
                     gap: 14,
                     padding: '16px 20px',
                     borderRadius: 16,
-                    background: 'rgba(16,16,42,0.75)',
-                    border: '1px solid rgba(124,58,237,0.12)',
+                    background: 'var(--surface)',
+                    border: '1px solid var(--border)',
                     cursor: 'pointer',
-                    backdropFilter: 'blur(12px)',
                   }}
                 >
                   {/* Logo */}
                   <div style={{
                     width: 52, height: 52, borderRadius: 12, flexShrink: 0,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: 'rgba(124,58,237,0.1)',
+                    background: 'rgba(124,58,237,0.08)',
                     border: '1px solid rgba(124,58,237,0.18)',
                     padding: 9,
                   }}>
@@ -92,7 +90,7 @@ export default function Leagues() {
                   {/* Info */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{
-                      fontSize: 14, fontWeight: 700, color: '#f1f5f9', margin: 0,
+                      fontSize: 14, fontWeight: 700, color: 'var(--text-1)', margin: 0,
                       overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                     }}>
                       {item.name}
@@ -106,7 +104,7 @@ export default function Leagues() {
                           onError={e => { e.target.style.display = 'none' }}
                         />
                       )}
-                      <span style={{ fontSize: 12, color: '#64748b' }}>{item.country}</span>
+                      <span style={{ fontSize: 12, color: 'var(--text-2)' }}>{item.country}</span>
                     </div>
                   </div>
 

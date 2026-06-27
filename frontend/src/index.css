@@ -8,31 +8,65 @@
 
 html { scroll-behavior: smooth; }
 
+/* ── Theme variables ── */
+/* DEFAULT = LIGHT (CUBIC style) */
+:root {
+  --bg:           #f4f6fb;
+  --surface:      #ffffff;
+  --surface2:     #f0f2f8;
+  --sidebar-bg:   #ffffff;
+  --topbar-bg:    rgba(255,255,255,0.97);
+  --ticker-bg:    #f0f2f8;
+  --text-1:       #111827;
+  --text-2:       #6b7280;
+  --text-3:       #9ca3af;
+  --text-4:       #d1d5db;
+  --border:       #e5e7eb;
+  --orb-opacity:  0.0;
+}
+
+/* DARK mode */
+body.dark {
+  --bg:           #111114;
+  --surface:      #1a1a1f;
+  --surface2:     #222228;
+  --sidebar-bg:   #111114;
+  --topbar-bg:    rgba(17,17,20,0.96);
+  --ticker-bg:    #0d0d10;
+  --text-1:       #f4f4f6;
+  --text-2:       #9090a0;
+  --text-3:       #55555f;
+  --text-4:       #363640;
+  --border:       rgba(255,255,255,0.08);
+  --orb-opacity:  0.0;
+}
+
 body {
-  background-color: #080817;
-  color: #f1f5f9;
+  background-color: var(--bg);
+  color: var(--text-1);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 ::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: #10102a; }
-::-webkit-scrollbar-thumb { background: #7c3aed; border-radius: 99px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.5); border-radius: 99px; }
 
 /* ── Glass cards ── */
 .glass {
-  background: rgba(16, 16, 42, 0.75);
+  background: var(--surface);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(124, 58, 237, 0.18);
+  border: 1px solid var(--border);
   border-radius: 16px;
 }
 .glass-sm {
-  background: rgba(21, 21, 58, 0.65);
+  background: var(--surface2);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(124, 58, 237, 0.12);
+  border: 1px solid var(--border);
   border-radius: 12px;
 }
 
@@ -68,7 +102,7 @@ body {
   100% { background-position:  200% 0; }
 }
 .shimmer {
-  background: linear-gradient(90deg, #10102a 25%, #1e1e4a 50%, #10102a 75%);
+  background: linear-gradient(90deg, var(--surface) 25%, rgba(255,255,255,0.06) 50%, var(--surface) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 8px;
@@ -138,7 +172,7 @@ body {
 .team-flip-wrap:hover .team-flip-inner { transform: rotateY(180deg); }
 .team-flip-front,
 .team-flip-back {
-  background-color: #0d0d1e;
+  background-color: var(--surface);
   position: absolute;
   width: 100%;
   height: 100%;
@@ -161,7 +195,7 @@ body {
 .team-flip-back-inner {
   position: absolute;
   width: 99%; height: 99%;
-  background: #0d0d1e;
+  background: var(--surface);
   border-radius: 11px;
   display: flex;
   flex-direction: column;

@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'motion/react'
-import { Search, Radio } from 'lucide-react'
+import { Search, Radio, Sun, Moon, Trophy } from 'lucide-react'
 import { searchAPI } from '../../services/api'
+import { useTheme } from '../../context/ThemeContext'
 
 const flag = cc => `https://flagcdn.com/w40/${cc}.png`
 
@@ -27,7 +28,7 @@ function LiveTicker() {
   return (
     <div style={{
       display: 'flex', alignItems: 'center',
-      background: 'rgba(8,8,23,0.95)',
+      background: 'var(--ticker-bg)',
       borderBottom: '1px solid rgba(124,58,237,0.15)',
       overflow: 'hidden',
       height: 44,
@@ -40,7 +41,7 @@ function LiveTicker() {
         background: 'linear-gradient(135deg,#7c3aed,#4f46e5)',
         borderRight: '2px solid rgba(124,58,237,0.5)',
       }}>
-        <span style={{ fontSize: 14 }}>🏆</span>
+        <Trophy size={14} color="#fff" />
         <span style={{ fontSize: 10, fontWeight: 800, color: '#fff', letterSpacing: '0.07em', whiteSpace: 'nowrap' }}>
           WORLD CUP
         </span>
@@ -74,7 +75,7 @@ function LiveTicker() {
             {/* Time */}
             <span style={{
               fontSize: 11, fontWeight: 700,
-              color: m.live ? '#22d47a' : '#475569',
+              color: m.live ? '#22d47a' : 'var(--text-2)',
               minWidth: 34, textAlign: 'center',
               letterSpacing: '0.03em',
             }}>
@@ -86,7 +87,7 @@ function LiveTicker() {
 
             {/* Score */}
             <span style={{
-              fontSize: 13, fontWeight: 800, color: '#fff',
+              fontSize: 13, fontWeight: 800, color: 'var(--text-1)',
               letterSpacing: '0.05em', minWidth: 28, textAlign: 'center',
             }}>
               {m.hs}:{m.as}
@@ -107,6 +108,7 @@ export default function Topbar({ title }) {
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
   const searchRef = useRef(null)
+  const { dark, toggle } = useTheme()
 
   useEffect(() => {
     const handler = (e) => {
@@ -137,17 +139,19 @@ export default function Topbar({ title }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          width: '100%',
           padding: '14px 32px',
-          background: 'rgba(8,8,23,0.85)',
+          boxSizing: 'border-box',
+          background: 'var(--topbar-bg)',
           backdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(124,58,237,0.12)',
+          borderBottom: '1px solid var(--border)',
         }}
       >
-      <h1 style={{ fontSize: 18, fontWeight: 700, color: '#fff', margin: 0 }}>{title}</h1>
+      <h1 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-1)', margin: 0 }}>{title}</h1>
 
       {/* Search */}
       <div style={{ position: 'relative', width: 288 }}>
-        <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
+        <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-3)' }} />
         <input
           value={q}
           ref={searchRef}
@@ -163,11 +167,11 @@ export default function Topbar({ title }) {
             paddingBottom: 9,
             borderRadius: 12,
             fontSize: 13,
-            color: '#e2e8f0',
+            color: 'var(--text-1)',
             outline: 'none',
             boxSizing: 'border-box',
-            background: 'rgba(21,21,58,0.8)',
-            border: '1px solid rgba(124,58,237,0.2)',
+            background: 'var(--surface2)',
+            border: '1px solid var(--border)',
           }}
         />
 
@@ -185,9 +189,9 @@ export default function Topbar({ title }) {
                 borderRadius: 12,
                 overflow: 'hidden',
                 zIndex: 50,
-                background: '#10102a',
-                border: '1px solid rgba(124,58,237,0.3)',
-                boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
+                background: 'var(--surface)',
+                border: '1px solid var(--border)',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
               }}
             >
               {results.teams?.response?.slice(0, 5).map(t => (
@@ -206,12 +210,12 @@ export default function Topbar({ title }) {
                     textAlign: 'left',
                     transition: 'background 0.15s',
                   }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                  onMouseEnter={e => e.currentTarget.style.background = 'var(--surface2)'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
                   <img src={t.team.logo} alt="" style={{ width: 24, height: 24, objectFit: 'contain' }} />
-                  <span style={{ fontSize: 13, color: '#e2e8f0' }}>{t.team.name}</span>
-                  <span style={{ marginLeft: 'auto', fontSize: 11, color: '#64748b' }}>{t.team.country}</span>
+                  <span style={{ fontSize: 13, color: 'var(--text-1)' }}>{t.team.name}</span>
+                  <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text-3)' }}>{t.team.country}</span>
                 </button>
               ))}
               {results.teams?.response?.length === 0 && (
@@ -222,10 +226,33 @@ export default function Topbar({ title }) {
         </AnimatePresence>
       </div>
 
-      {/* Live indicator */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <Radio size={14} style={{ color: '#22d47a' }} />
-        <span style={{ fontSize: 12, color: '#22d47a', fontWeight: 700 }}>LIVE</span>
+      {/* Right side controls */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        {/* Live indicator */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Radio size={14} style={{ color: '#22d47a' }} />
+          <span style={{ fontSize: 12, color: '#22d47a', fontWeight: 700 }}>LIVE</span>
+        </div>
+
+        {/* Theme toggle */}
+        <button
+          onClick={toggle}
+          title={dark ? 'Light mode' : 'Dark mode'}
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: 36, height: 36, borderRadius: 10,
+            border: '1px solid var(--border)',
+            background: 'var(--surface2)',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            color: '#a78bfa',
+            flexShrink: 0,
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = 'rgba(124,58,237,0.3)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'rgba(124,58,237,0.15)'}
+        >
+          {dark ? <Sun size={16} /> : <Moon size={16} />}
+        </button>
       </div>
       </div>
     </header>

@@ -16,9 +16,9 @@ const LEAGUES = [
 ]
 
 const FORM_COLOR = {
-  W: { bg: 'rgba(34,212,122,0.18)', text: '#22d47a', border: 'rgba(34,212,122,0.35)' },
-  D: { bg: 'rgba(245,158,11,0.18)', text: '#f59e0b', border: 'rgba(245,158,11,0.35)' },
-  L: { bg: 'rgba(244,63,94,0.18)',  text: '#f43f5e', border: 'rgba(244,63,94,0.35)'  },
+  W: { bg: 'rgba(34,212,122,0.15)',  text: '#16a34a', border: 'rgba(34,212,122,0.3)' },
+  D: { bg: 'rgba(245,158,11,0.15)', text: '#d97706', border: 'rgba(245,158,11,0.3)' },
+  L: { bg: 'rgba(244,63,94,0.15)',  text: '#dc2626', border: 'rgba(244,63,94,0.3)'  },
 }
 
 const zoneColor = rank => {
@@ -27,7 +27,7 @@ const zoneColor = rank => {
   return 'transparent'
 }
 
-const gdColor = gd => gd > 0 ? '#22d47a' : gd < 0 ? '#f43f5e' : '#64748b'
+const gdColor = gd => gd > 0 ? '#16a34a' : gd < 0 ? '#dc2626' : 'var(--text-3)'
 
 function FormBadge({ result }) {
   const c = FORM_COLOR[result]
@@ -45,62 +45,56 @@ function FormBadge({ result }) {
 }
 
 const rowVariants = {
-  hidden: { opacity: 0, x: -18 },
+  hidden: { opacity: 0, x: -16 },
   show:   { opacity: 1, x: 0, transition: { type: 'spring', stiffness: 260, damping: 22 } },
 }
-
 const listVariants = {
   hidden: {},
-  show:   { transition: { staggerChildren: 0.045 } },
+  show:   { transition: { staggerChildren: 0.04 } },
 }
 
-const COLS = '2.5rem 2.5rem 1fr 2.5rem 2.5rem 2.5rem 2.5rem 2.5rem 2.5rem 6.5rem 3.5rem'
+const COLS = '2.4rem 2.4rem 1fr 2.4rem 2.4rem 2.4rem 2.4rem 2.4rem 2.6rem 6rem 3.2rem'
 
 export default function Standings() {
   const [leagueId, setLeagueId] = useState(39)
+  const current = LEAGUES.find(l => l.id === leagueId)
   const { data, loading, error } = useApi(() => standingsAPI.get(leagueId, current?.season ?? 2024), [leagueId])
 
-  const table   = data?.response?.[0]?.league?.standings?.[0] ?? []
-  const lgInfo  = data?.response?.[0]?.league
-  const current = LEAGUES.find(l => l.id === leagueId)
+  const table  = data?.response?.[0]?.league?.standings?.[0] ?? []
+  const lgInfo = data?.response?.[0]?.league
 
   return (
-    <div style={{ minHeight: '100vh' }}>
+    <div>
       <Topbar title="Standings" />
 
-      <div style={{ padding: '24px 32px', display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-        {/* ── League picker ── */}
+        {/* ── League tabs ── */}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {LEAGUES.map(l => {
             const active = leagueId === l.id
             return (
-              <motion.button
+              <button
                 key={l.id}
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.97 }}
                 onClick={() => setLeagueId(l.id)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 8,
                   padding: '8px 16px', borderRadius: 12,
                   fontSize: 13, fontWeight: 600,
-                  cursor: 'pointer', border: 'none', outline: 'none',
-                  background: active
-                    ? 'linear-gradient(135deg,#7c3aed,#4f46e5)'
-                    : 'rgba(21,21,58,0.8)',
-                  color: active ? '#fff' : '#94a3b8',
-                  boxShadow: active ? '0 0 18px rgba(124,58,237,0.4)' : 'none',
-                  transition: 'background 0.2s, color 0.2s, box-shadow 0.2s',
+                  cursor: 'pointer', border: active ? 'none' : '1px solid var(--border)',
+                  background: active ? 'linear-gradient(135deg,#7c3aed,#4f46e5)' : 'var(--surface)',
+                  color: active ? '#fff' : 'var(--text-2)',
+                  boxShadow: active ? '0 4px 16px rgba(124,58,237,0.3)' : 'none',
+                  transition: 'all 0.18s',
                 }}
               >
                 <img
                   src={`https://media.api-sports.io/football/leagues/${l.id}.png`}
-                  alt=""
-                  style={{ width: 18, height: 18, objectFit: 'contain' }}
+                  alt="" style={{ width: 18, height: 18, objectFit: 'contain' }}
                   onError={e => { e.target.style.display = 'none' }}
                 />
                 {l.name}
-              </motion.button>
+              </button>
             )
           })}
         </div>
@@ -109,74 +103,48 @@ export default function Standings() {
         <AnimatePresence mode="wait">
           <motion.div
             key={'banner-' + leagueId}
-            initial={{ opacity: 0, y: -14 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 14 }}
+            exit={{ opacity: 0 }}
             transition={{ type: 'spring', stiffness: 260, damping: 22 }}
             style={{
               display: 'flex', alignItems: 'center', gap: 16,
               padding: '16px 24px', borderRadius: 16,
-              background: 'linear-gradient(135deg,rgba(124,58,237,0.13),rgba(79,70,229,0.06))',
-              border: '1px solid rgba(124,58,237,0.22)',
-              position: 'relative', overflow: 'hidden',
+              background: 'linear-gradient(135deg,rgba(124,58,237,0.08),rgba(79,70,229,0.04))',
+              border: '1px solid rgba(124,58,237,0.2)',
             }}
           >
-            {/* Glow orb */}
             <div style={{
-              position: 'absolute', top: -30, right: -30,
-              width: 160, height: 160, borderRadius: '50%',
-              background: '#7c3aed', opacity: 0.08, filter: 'blur(32px)',
-              pointerEvents: 'none',
-            }} />
-
-            {/* League logo */}
-            <div style={{
-              width: 56, height: 56, borderRadius: 14, flexShrink: 0,
+              width: 52, height: 52, borderRadius: 14, flexShrink: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.09)',
-              padding: 8,
+              background: 'var(--surface)', border: '1px solid var(--border)', padding: 8,
             }}>
-              <img
-                src={`https://media.api-sports.io/football/leagues/${leagueId}.png`}
-                alt={current?.name}
-                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                onError={e => { e.target.style.opacity = 0.2 }}
-              />
+              <img src={`https://media.api-sports.io/football/leagues/${leagueId}.png`}
+                alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                onError={e => { e.target.style.opacity = 0.2 }} />
             </div>
-
-            {/* Title */}
             <div>
-              <h2 style={{ fontSize: 20, fontWeight: 800, color: '#fff', margin: 0 }}>
+              <h2 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-1)', margin: 0 }}>
                 {lgInfo?.name ?? current?.name}
               </h2>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
-                <span style={{ fontSize: 12, color: '#94a3b8' }}>{current?.country}</span>
+                <span style={{ fontSize: 12, color: 'var(--text-3)' }}>{current?.country}</span>
                 <span style={{
-                  fontSize: 11, fontWeight: 600, color: '#a78bfa',
-                  background: 'rgba(124,58,237,0.2)',
+                  fontSize: 11, fontWeight: 600, color: '#7c3aed',
+                  background: 'rgba(124,58,237,0.1)',
                   padding: '2px 10px', borderRadius: 999,
-                }}>
-                  2024/25
-                </span>
+                  border: '1px solid rgba(124,58,237,0.2)',
+                }}>2024/25</span>
                 {!loading && table.length > 0 && (
-                  <span style={{ fontSize: 11, color: '#475569' }}>{table.length} clubs</span>
+                  <span style={{ fontSize: 11, color: 'var(--text-3)' }}>{table.length} clubs</span>
                 )}
               </div>
             </div>
-
-            {/* Zone legend */}
-            <div style={{
-              marginLeft: 'auto', display: 'flex', flexDirection: 'column',
-              gap: 5, alignItems: 'flex-end',
-            }}>
-              {[
-                { color: '#7c3aed', label: 'UCL' },
-                { color: '#f59e0b', label: 'Europa' },
-              ].map(z => (
+            <div style={{ marginLeft: 'auto', display: 'flex', flexDirection: 'column', gap: 5, alignItems: 'flex-end' }}>
+              {[{ color: '#7c3aed', label: 'UCL' }, { color: '#f59e0b', label: 'Europa' }].map(z => (
                 <div key={z.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <div style={{ width: 8, height: 8, borderRadius: 2, background: z.color }} />
-                  <span style={{ fontSize: 11, color: '#64748b' }}>{z.label}</span>
+                  <span style={{ fontSize: 11, color: 'var(--text-3)' }}>{z.label}</span>
                 </div>
               ))}
             </div>
@@ -192,38 +160,38 @@ export default function Standings() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.18 }}
             style={{
-              background: 'rgba(16,16,42,0.75)',
-              border: '1px solid rgba(124,58,237,0.15)',
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
               borderRadius: 16, overflow: 'hidden',
             }}
           >
-            {/* Column headers */}
+            {/* Header row */}
             <div style={{
               display: 'grid', gridTemplateColumns: COLS,
               padding: '10px 16px 10px 20px',
-              fontSize: 11, fontWeight: 600, color: '#475569',
-              borderBottom: '1px solid rgba(124,58,237,0.1)',
-              background: 'rgba(124,58,237,0.05)',
+              fontSize: 11, fontWeight: 700, color: 'var(--text-3)',
+              borderBottom: '1px solid var(--border)',
+              background: 'var(--surface2)',
+              textTransform: 'uppercase', letterSpacing: '0.04em',
             }}>
               <span style={{ textAlign: 'center' }}>#</span>
               <span />
               <span>Club</span>
               <span style={{ textAlign: 'center' }}>P</span>
-              <span style={{ textAlign: 'center', color: '#22d47a' }}>W</span>
-              <span style={{ textAlign: 'center', color: '#f59e0b' }}>D</span>
-              <span style={{ textAlign: 'center', color: '#f43f5e' }}>L</span>
+              <span style={{ textAlign: 'center', color: '#16a34a' }}>W</span>
+              <span style={{ textAlign: 'center', color: '#d97706' }}>D</span>
+              <span style={{ textAlign: 'center', color: '#dc2626' }}>L</span>
               <span style={{ textAlign: 'center' }}>GF</span>
               <span style={{ textAlign: 'center' }}>GD</span>
               <span style={{ textAlign: 'center' }}>Form</span>
-              <span style={{ textAlign: 'center', color: '#a78bfa', fontWeight: 700 }}>Pts</span>
+              <span style={{ textAlign: 'center', color: '#7c3aed' }}>Pts</span>
             </div>
 
-            {/* Loading skeletons */}
+            {/* Loading */}
             {loading && Array.from({ length: 12 }).map((_, i) => (
               <div key={i} style={{
                 display: 'flex', alignItems: 'center', gap: 12,
-                padding: '11px 20px',
-                borderBottom: '1px solid rgba(124,58,237,0.05)',
+                padding: '11px 20px', borderBottom: '1px solid var(--border)',
               }}>
                 <Skeleton style={{ width: 20, height: 11, borderRadius: 3 }} />
                 <Skeleton style={{ width: 26, height: 26, borderRadius: '50%' }} />
@@ -235,21 +203,19 @@ export default function Standings() {
             {/* Error */}
             {!loading && error && (
               <div style={{ padding: '52px 0', textAlign: 'center' }}>
-                <p style={{ color: '#f43f5e', fontSize: 14, fontWeight: 600, margin: '0 0 6px' }}>
-                  API limit reached
-                </p>
-                <p style={{ color: '#475569', fontSize: 12, margin: 0 }}>Please try again tomorrow</p>
+                <p style={{ color: '#dc2626', fontSize: 14, fontWeight: 600, margin: '0 0 6px' }}>API limit reached</p>
+                <p style={{ color: 'var(--text-3)', fontSize: 12, margin: 0 }}>Please try again tomorrow</p>
               </div>
             )}
 
             {/* Empty */}
             {!loading && !error && table.length === 0 && (
               <div style={{ padding: '52px 0', textAlign: 'center' }}>
-                <p style={{ color: '#475569', fontSize: 13, margin: 0 }}>No standings data</p>
+                <p style={{ color: 'var(--text-3)', fontSize: 13, margin: 0 }}>No standings data available</p>
               </div>
             )}
 
-            {/* Table rows */}
+            {/* Rows */}
             {!loading && !error && table.length > 0 && (
               <motion.div variants={listVariants} initial="hidden" animate="show">
                 {table.map(row => {
@@ -264,108 +230,63 @@ export default function Standings() {
                         display: 'grid',
                         gridTemplateColumns: COLS,
                         alignItems: 'center',
-                        padding: '9px 16px 9px 17px',
-                        borderBottom: '1px solid rgba(124,58,237,0.06)',
+                        padding: '10px 16px 10px 17px',
+                        borderBottom: '1px solid var(--border)',
                         borderLeft: `3px solid ${zc}`,
-                        background: isPromo ? 'rgba(124,58,237,0.035)' : 'transparent',
+                        background: isPromo ? 'rgba(124,58,237,0.04)' : 'transparent',
                         transition: 'background 0.14s',
+                        cursor: 'pointer',
                       }}
-                      onMouseEnter={e => {
-                        e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
-                      }}
-                      onMouseLeave={e => {
-                        e.currentTarget.style.background = isPromo
-                          ? 'rgba(124,58,237,0.035)'
-                          : 'transparent'
-                      }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(124,58,237,0.06)' }}
+                      onMouseLeave={e => { e.currentTarget.style.background = isPromo ? 'rgba(124,58,237,0.04)' : 'transparent' }}
                     >
                       {/* Rank */}
-                      <div style={{ textAlign: 'center' }}>
-                        <span style={{
-                          fontSize: 12, fontWeight: 700,
-                          color: isPromo ? '#a78bfa' : '#475569',
-                        }}>
-                          {row.rank}
-                        </span>
-                      </div>
+                      <span style={{ textAlign: 'center', fontSize: 12, fontWeight: 700, color: isPromo ? '#7c3aed' : 'var(--text-3)' }}>
+                        {row.rank}
+                      </span>
 
-                      {/* Team logo */}
+                      {/* Logo */}
                       <Link to={`/teams/${row.team.id}`} onClick={e => e.stopPropagation()}>
-                        <motion.img
-                          whileHover={{ scale: 1.2 }}
-                          src={row.team.logo}
-                          alt={row.team.name}
-                          style={{ width: 26, height: 26, objectFit: 'contain', display: 'block' }}
-                          onError={e => { e.target.style.opacity = 0.25 }}
-                        />
+                        <img src={row.team.logo} alt="" style={{ width: 24, height: 24, objectFit: 'contain', display: 'block' }}
+                          onError={e => { e.target.style.opacity = 0.2 }} />
                       </Link>
 
-                      {/* Team name */}
+                      {/* Name */}
                       <Link to={`/teams/${row.team.id}`} style={{ textDecoration: 'none', overflow: 'hidden' }}>
-                        <span
-                          style={{
-                            fontSize: 13, fontWeight: isPromo ? 700 : 500,
-                            color: isPromo ? '#e2e8f0' : '#cbd5e1',
-                            overflow: 'hidden', textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap', display: 'block',
-                            transition: 'color 0.14s',
-                          }}
-                          onMouseEnter={e => { e.currentTarget.style.color = '#a78bfa' }}
-                          onMouseLeave={e => {
-                            e.currentTarget.style.color = isPromo ? '#e2e8f0' : '#cbd5e1'
-                          }}
-                        >
+                        <span style={{
+                          fontSize: 13, fontWeight: isPromo ? 700 : 500,
+                          color: 'var(--text-1)',
+                          overflow: 'hidden', textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap', display: 'block',
+                        }}>
                           {row.team.name}
                         </span>
                       </Link>
 
-                      {/* P */}
-                      <span style={{ textAlign: 'center', fontSize: 12, color: '#64748b' }}>
-                        {row.all.played}
-                      </span>
-                      {/* W */}
-                      <span style={{ textAlign: 'center', fontSize: 12, fontWeight: 600, color: '#22d47a' }}>
-                        {row.all.win}
-                      </span>
-                      {/* D */}
-                      <span style={{ textAlign: 'center', fontSize: 12, color: '#f59e0b' }}>
-                        {row.all.draw}
-                      </span>
-                      {/* L */}
-                      <span style={{ textAlign: 'center', fontSize: 12, color: '#f43f5e' }}>
-                        {row.all.lose}
-                      </span>
-                      {/* GF */}
-                      <span style={{ textAlign: 'center', fontSize: 12, color: '#64748b' }}>
-                        {row.all.goals.for}
-                      </span>
-                      {/* GD */}
-                      <span style={{
-                        textAlign: 'center', fontSize: 12, fontWeight: 600,
-                        color: gdColor(row.goalsDiff),
-                      }}>
+                      {/* Stats */}
+                      <span style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-2)' }}>{row.all.played}</span>
+                      <span style={{ textAlign: 'center', fontSize: 12, fontWeight: 600, color: '#16a34a' }}>{row.all.win}</span>
+                      <span style={{ textAlign: 'center', fontSize: 12, color: '#d97706' }}>{row.all.draw}</span>
+                      <span style={{ textAlign: 'center', fontSize: 12, color: '#dc2626' }}>{row.all.lose}</span>
+                      <span style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-2)' }}>{row.all.goals.for}</span>
+                      <span style={{ textAlign: 'center', fontSize: 12, fontWeight: 600, color: gdColor(row.goalsDiff) }}>
                         {row.goalsDiff > 0 ? '+' : ''}{row.goalsDiff}
                       </span>
 
-                      {/* Form last 5 */}
+                      {/* Form */}
                       <div style={{ display: 'flex', gap: 3, justifyContent: 'center' }}>
-                        {(row.form ?? '').split('').slice(-5).map((r, j) => (
-                          <FormBadge key={j} result={r} />
-                        ))}
+                        {(row.form ?? '').split('').slice(-5).map((r, j) => <FormBadge key={j} result={r} />)}
                       </div>
 
                       {/* Points */}
                       <div style={{ display: 'flex', justifyContent: 'center' }}>
                         <div style={{
-                          minWidth: 36, height: 28, borderRadius: 8, padding: '0 8px',
+                          minWidth: 34, height: 28, borderRadius: 8, padding: '0 8px',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: 13, fontWeight: 800, color: '#fff',
-                          background: isPromo
-                            ? 'linear-gradient(135deg,rgba(124,58,237,0.35),rgba(79,70,229,0.35))'
-                            : 'rgba(255,255,255,0.05)',
-                          border: isPromo
-                            ? '1px solid rgba(124,58,237,0.45)'
-                            : '1px solid rgba(255,255,255,0.07)',
+                          fontSize: 13, fontWeight: 800,
+                          color: isPromo ? '#fff' : 'var(--text-1)',
+                          background: isPromo ? 'linear-gradient(135deg,#7c3aed,#4f46e5)' : 'var(--surface2)',
+                          border: isPromo ? 'none' : '1px solid var(--border)',
                         }}>
                           {row.points}
                         </div>
@@ -377,7 +298,6 @@ export default function Standings() {
             )}
           </motion.div>
         </AnimatePresence>
-
       </div>
     </div>
   )

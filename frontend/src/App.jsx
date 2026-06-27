@@ -1,16 +1,18 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
+import { ThemeProvider } from './context/ThemeContext'
 import Sidebar from './components/layout/Sidebar'
 import ScrollToTop from './components/ui/ScrollToTop'
-import Home       from './pages/Home'
-import WorldCup   from './pages/WorldCup'
-import Matches    from './pages/Matches'
-import Standings  from './pages/Standings'
-import Teams      from './pages/Teams'
-import Players    from './pages/Players'
-import Leagues    from './pages/Leagues'
+import Home        from './pages/Home'
+import WorldCup    from './pages/WorldCup'
+import Matches     from './pages/Matches'
+import Standings   from './pages/Standings'
+import Teams       from './pages/Teams'
+import Players     from './pages/Players'
+import Leagues     from './pages/Leagues'
 import LeagueDetail from './pages/LeagueDetail'
-import NotFound     from './pages/NotFound'
+import WatchLive   from './pages/WatchLive'
+import NotFound    from './pages/NotFound'
 
 const pageVariants = {
   initial: { opacity: 0, y: 18, filter: 'blur(4px)' },
@@ -43,6 +45,7 @@ function AppRoutes() {
         <Route path="/players/*"   element={<PageWrapper><Players /></PageWrapper>} />
         <Route path="/leagues"     element={<PageWrapper><Leagues /></PageWrapper>} />
         <Route path="/leagues/:id" element={<PageWrapper><LeagueDetail /></PageWrapper>} />
+        <Route path="/watch"       element={<PageWrapper><WatchLive /></PageWrapper>} />
         <Route path="*"            element={<PageWrapper><NotFound /></PageWrapper>} />
       </Routes>
     </AnimatePresence>
@@ -51,9 +54,9 @@ function AppRoutes() {
 
 export default function App() {
   return (
+    <ThemeProvider>
     <BrowserRouter>
       <ScrollToTop />
-      {/* Floating orbs */}
       <div className="orb" style={{ width: 384, height: 384, background:'#7c3aed', top:'5%',  left:'18%', animationDelay:'0s'  }} />
       <div className="orb" style={{ width: 320, height: 320, background:'#4f46e5', top:'55%', right:'10%', animationDelay:'4s'  }} />
       <div className="orb" style={{ width: 256, height: 256, background:'#a855f7', top:'35%', left:'48%', animationDelay:'8s'  }} />
@@ -65,5 +68,6 @@ export default function App() {
         </main>
       </div>
     </BrowserRouter>
+    </ThemeProvider>
   )
 }
