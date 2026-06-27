@@ -10,6 +10,7 @@ import Teams      from './pages/Teams'
 import Players    from './pages/Players'
 import Leagues    from './pages/Leagues'
 import LeagueDetail from './pages/LeagueDetail'
+import NotFound     from './pages/NotFound'
 
 const pageVariants = {
   initial: { opacity: 0, y: 18, filter: 'blur(4px)' },
@@ -42,6 +43,7 @@ function AppRoutes() {
         <Route path="/players/*"   element={<PageWrapper><Players /></PageWrapper>} />
         <Route path="/leagues"     element={<PageWrapper><Leagues /></PageWrapper>} />
         <Route path="/leagues/:id" element={<PageWrapper><LeagueDetail /></PageWrapper>} />
+        <Route path="*"            element={<PageWrapper><NotFound /></PageWrapper>} />
       </Routes>
     </AnimatePresence>
   )
