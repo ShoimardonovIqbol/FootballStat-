@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import Sidebar from './components/layout/Sidebar'
+import ScrollToTop from './components/ui/ScrollToTop'
 import Home       from './pages/Home'
 import WorldCup   from './pages/WorldCup'
 import Matches    from './pages/Matches'
@@ -49,6 +50,7 @@ function AppRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       {/* Floating orbs */}
       <div className="orb" style={{ width: 384, height: 384, background:'#7c3aed', top:'5%',  left:'18%', animationDelay:'0s'  }} />
       <div className="orb" style={{ width: 320, height: 320, background:'#4f46e5', top:'55%', right:'10%', animationDelay:'4s'  }} />
