@@ -18,22 +18,22 @@ export default function MatchCard({ fixture, index = 0 }) {
   const awayWin = !isNS && (goals.away ?? 0) > (goals.home ?? 0)
 
   return (
-    <Link to={`/matches/${f.id}`} style={{ textDecoration: 'none', display: 'block', marginBottom: 2 }}>
+    <Link to={`/matches/${f.id}`} style={{ textDecoration: 'none', display: 'block' }}>
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: '48px 1fr 80px 1fr',
+          gridTemplateColumns: '56px 1fr 88px 1fr',
           alignItems: 'center',
           gap: 8,
-          padding: '11px 14px',
+          padding: '10px 12px',
           borderRadius: 10,
-          background: isLive ? 'rgba(34,212,122,0.06)' : 'transparent',
-          border: `1px solid ${isLive ? 'rgba(34,212,122,0.18)' : 'transparent'}`,
+          background: isLive ? 'rgba(34,212,122,0.05)' : 'transparent',
+          border: `1px solid ${isLive ? 'rgba(34,212,122,0.2)' : 'transparent'}`,
           transition: 'background 0.15s',
           cursor: 'pointer',
         }}
         onMouseEnter={e => { e.currentTarget.style.background = isLive ? 'rgba(34,212,122,0.08)' : 'var(--surface2)' }}
-        onMouseLeave={e => { e.currentTarget.style.background = isLive ? 'rgba(34,212,122,0.06)' : 'transparent' }}
+        onMouseLeave={e => { e.currentTarget.style.background = isLive ? 'rgba(34,212,122,0.05)' : 'transparent' }}
       >
         {/* Col 1: Status */}
         <div style={{ textAlign: 'center' }}>
@@ -50,18 +50,27 @@ export default function MatchCard({ fixture, index = 0 }) {
           )}
         </div>
 
-        {/* Col 2: Home team */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8, minWidth: 0 }}>
+        {/* Col 2: Home team (logo + name, right-aligned) */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, overflow: 'hidden' }}>
           <span style={{
-            fontSize: 13, fontWeight: homeWin ? 700 : 500,
+            flex: 1,
+            textAlign: 'right',
+            fontSize: 13,
+            fontWeight: homeWin ? 700 : 500,
             color: homeWin ? 'var(--text-1)' : 'var(--text-2)',
-            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-            maxWidth: 140,
-          }}>{teams.home.name}</span>
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
+            {teams.home.name}
+          </span>
           {teams.home.logo && (
-            <img src={teams.home.logo} alt=""
-              style={{ width: 24, height: 24, objectFit: 'contain', flexShrink: 0 }}
-              onError={e => { e.target.style.display = 'none' }} />
+            <img
+              src={teams.home.logo}
+              alt=""
+              style={{ width: 22, height: 22, objectFit: 'contain', flexShrink: 0 }}
+              onError={e => { e.target.style.opacity = 0.2 }}
+            />
           )}
         </div>
 
@@ -72,28 +81,42 @@ export default function MatchCard({ fixture, index = 0 }) {
           ) : (
             <span style={{
               display: 'inline-block',
-              padding: '4px 12px', borderRadius: 8,
+              padding: '4px 10px',
+              borderRadius: 8,
               background: isLive ? 'rgba(34,212,122,0.12)' : 'var(--surface2)',
-              border: `1px solid ${isLive ? 'rgba(34,212,122,0.25)' : 'var(--border)'}`,
-              fontSize: 14, fontWeight: 900, color: 'var(--text-1)',
-              letterSpacing: '0.05em',
-            }}>{goals.home ?? 0}–{goals.away ?? 0}</span>
+              border: `1px solid ${isLive ? 'rgba(34,212,122,0.3)' : 'var(--border)'}`,
+              fontSize: 14,
+              fontWeight: 900,
+              color: 'var(--text-1)',
+              letterSpacing: '0.04em',
+              whiteSpace: 'nowrap',
+            }}>
+              {goals.home ?? 0} – {goals.away ?? 0}
+            </span>
           )}
         </div>
 
-        {/* Col 4: Away team */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+        {/* Col 4: Away team (logo + name, left-aligned) */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, overflow: 'hidden' }}>
           {teams.away.logo && (
-            <img src={teams.away.logo} alt=""
-              style={{ width: 24, height: 24, objectFit: 'contain', flexShrink: 0 }}
-              onError={e => { e.target.style.display = 'none' }} />
+            <img
+              src={teams.away.logo}
+              alt=""
+              style={{ width: 22, height: 22, objectFit: 'contain', flexShrink: 0 }}
+              onError={e => { e.target.style.opacity = 0.2 }}
+            />
           )}
           <span style={{
-            fontSize: 13, fontWeight: awayWin ? 700 : 500,
+            flex: 1,
+            fontSize: 13,
+            fontWeight: awayWin ? 700 : 500,
             color: awayWin ? 'var(--text-1)' : 'var(--text-2)',
-            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-            maxWidth: 140,
-          }}>{teams.away.name}</span>
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
+            {teams.away.name}
+          </span>
         </div>
       </div>
     </Link>

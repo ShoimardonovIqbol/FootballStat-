@@ -1,13 +1,20 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { standingsAPI, matchesAPI } from '../services/api'
+import { standingsAPI, matchesAPI, playersAPI } from '../services/api'
 import Topbar from '../components/layout/Topbar'
-import { Trophy, Globe, Calendar } from 'lucide-react'
+import { Trophy, Globe, Calendar, Target, Share2 } from 'lucide-react'
 
 const WC_LEAGUE = 1
-const WC_SEASON = 2022
+const WC_SEASON = 2026
 const GROUP_LABELS = 'ABCDEFGHIJKL'.split('')
 const safe = p => p.then(r => r.data).catch(() => null)
+
+const TABS = [
+  { key: 'groups',   label: 'Groups',      Icon: Globe    },
+  { key: 'fixtures', label: 'Fixtures',    Icon: Calendar },
+  { key: 'scorers',  label: 'Top Scorers', Icon: Target   },
+  { key: 'assists',  label: 'Top Assists', Icon: Share2   },
+]
 
 function GroupCard({ group, label, index }) {
   return (
@@ -173,20 +180,88 @@ function FixtureRow({ match }) {
   )
 }
 
-function GroupSkeleton() {
+function ScorerRow({ player, rank, value, valueLabel }) {
+  const { player: p, statistics } = player
+  const stat = statistics?.[0]
+  const isTop3 = rank <= 3
+  const medalColor = rank === 1 ? '#f59e0b' : rank === 2 ? '#94a3b8' : '#cd7c2e'
+
   return (
     <div style={{
-      background: 'var(--surface)',
-      border: '1px solid var(--border)',
-      borderRadius: 14, overflow: 'hidden',
+      display: 'grid',
+      gridTemplateColumns: '44px 40px 1fr auto',
+      alignItems: 'center',
+      gap: 12,
+      padding: '10px 16px',
+      borderBottom: '1px solid var(--border)',
+      background: isTop3 ? 'rgba(124,58,237,0.03)' : 'transparent',
     }}>
+      <div style={{ textAlign: 'center' }}>
+        {isTop3 ? (
+          <div style={{
+            width: 26, height: 26, borderRadius: '50%',
+            background: medalColor,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 11, fontWeight: 800, color: '#fff', margin: '0 auto',
+          }}>
+            {rank}
+          </div>
+        ) : (
+          <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-3)' }}>{rank}</span>
+        )}
+      </div>
+
+      <img
+        src={p.photo} alt=""
+        style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--border)' }}
+        onError={e => { e.target.style.opacity = 0.3 }}
+      />
+
+      <div style={{ minWidth: 0 }}>
+        <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-1)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {p.name}
+        </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 2 }}>
+          {stat?.team?.logo && (
+            <img src={stat.team.logo} alt="" style={{ width: 14, height: 14, objectFit: 'contain' }}
+              onError={e => { e.target.style.opacity = 0 }} />
+          )}
+          <span style={{ fontSize: 11, color: 'var(--text-3)' }}>{stat?.team?.name ?? '—'}</span>
+        </div>
+      </div>
+
+      <div style={{ textAlign: 'center', paddingLeft: 8 }}>
+        <div style={{ fontSize: 22, fontWeight: 900, color: isTop3 ? '#7c3aed' : 'var(--text-1)', lineHeight: 1 }}>
+          {value ?? 0}
+        </div>
+        <div style={{ fontSize: 9, color: 'var(--text-3)', fontWeight: 700, letterSpacing: '0.08em', marginTop: 2 }}>
+          {valueLabel}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ScorerSkeleton() {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '44px 40px 1fr auto', alignItems: 'center', gap: 12, padding: '10px 16px', borderBottom: '1px solid var(--border)' }}>
+      <div style={{ width: 26, height: 26, borderRadius: '50%', background: 'var(--surface2)', margin: '0 auto' }} />
+      <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--surface2)' }} />
+      <div>
+        <div style={{ width: '55%', height: 11, borderRadius: 4, background: 'var(--surface2)' }} />
+        <div style={{ width: '35%', height: 9, borderRadius: 4, background: 'var(--surface2)', marginTop: 6 }} />
+      </div>
+      <div style={{ width: 32, height: 28, borderRadius: 6, background: 'rgba(124,58,237,0.1)', marginLeft: 'auto' }} />
+    </div>
+  )
+}
+
+function GroupSkeleton() {
+  return (
+    <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, overflow: 'hidden' }}>
       <div style={{ height: 44, background: 'rgba(124,58,237,0.06)', borderBottom: '1px solid var(--border)' }} />
       {[1,2,3,4].map(i => (
-        <div key={i} style={{
-          height: 36, padding: '0 12px',
-          borderBottom: '1px solid var(--border)',
-          display: 'flex', alignItems: 'center', gap: 8,
-        }}>
+        <div key={i} style={{ height: 36, padding: '0 12px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'var(--surface2)' }} />
           <div style={{ flex: 1, height: 10, borderRadius: 4, background: 'var(--surface2)' }} />
           <div style={{ width: 22, height: 20, borderRadius: 5, background: 'rgba(124,58,237,0.1)' }} />
@@ -200,15 +275,21 @@ export default function WorldCup() {
   const [tab, setTab] = useState('groups')
   const [groups, setGroups] = useState([])
   const [fixtures, setFixtures] = useState([])
+  const [scorers, setScorers] = useState([])
+  const [assists, setAssists] = useState([])
   const [loading, setLoading] = useState(true)
+  const [scorersLoading, setScorersLoading] = useState(false)
+  const [assistsLoading, setAssistsLoading] = useState(false)
   const [error, setError] = useState(false)
+  const scorersFetched = useRef(false)
+  const assistsFetched = useRef(false)
 
   useEffect(() => {
     setLoading(true)
     setError(false)
     Promise.all([
       safe(standingsAPI.get(WC_LEAGUE, WC_SEASON)),
-      safe(matchesAPI.getList({ league: WC_LEAGUE, season: WC_SEASON, last: 48 })),
+      safe(matchesAPI.getList({ league: WC_LEAGUE, season: WC_SEASON, last: 64 })),
     ]).then(([st, fx]) => {
       if (!st) { setError(true); return }
       const raw = st.response?.[0]?.league?.standings ?? []
@@ -216,6 +297,24 @@ export default function WorldCup() {
       setFixtures((fx?.response ?? []).slice().reverse())
     }).finally(() => setLoading(false))
   }, [])
+
+  const handleTab = (key) => {
+    setTab(key)
+    if (key === 'scorers' && !scorersFetched.current) {
+      scorersFetched.current = true
+      setScorersLoading(true)
+      safe(playersAPI.getTopScorers(WC_LEAGUE, WC_SEASON))
+        .then(d => setScorers(d?.response ?? []))
+        .finally(() => setScorersLoading(false))
+    }
+    if (key === 'assists' && !assistsFetched.current) {
+      assistsFetched.current = true
+      setAssistsLoading(true)
+      safe(playersAPI.getTopAssists(WC_LEAGUE, WC_SEASON))
+        .then(d => setAssists(d?.response ?? []))
+        .finally(() => setAssistsLoading(false))
+    }
+  }
 
   return (
     <div style={{ minHeight: '100vh' }}>
@@ -248,40 +347,42 @@ export default function WorldCup() {
               <Trophy size={28} color="#fff" />
             </div>
 
-            <div>
+            <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
                 <h1 style={{ fontSize: 26, fontWeight: 900, color: 'var(--text-1)', margin: 0 }}>
-                  FIFA World Cup
+                  FIFA World Cup 2026
                 </h1>
                 <span style={{
                   fontSize: 11, fontWeight: 700, color: '#f59e0b',
                   background: 'rgba(245,158,11,0.15)',
                   border: '1px solid rgba(245,158,11,0.3)',
                   padding: '2px 10px', borderRadius: 999,
-                }}>Qatar 2022</span>
+                }}>🔴 Live Now</span>
               </div>
               <p style={{ fontSize: 13, color: 'var(--text-2)', margin: 0 }}>
-                Qatar &nbsp;|&nbsp; 32 Teams &nbsp;|&nbsp; 8 Groups &nbsp;|&nbsp; November–December 2022
+                USA · Canada · Mexico &nbsp;|&nbsp; 48 Teams &nbsp;|&nbsp; 12 Groups &nbsp;|&nbsp; June–July 2026
               </p>
             </div>
 
-            <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
-              <img src={'https://flagcdn.com/w40/qa.png'} alt="Qatar"
-                style={{ width: 34, height: 22, objectFit: 'cover', borderRadius: 4, border: '1px solid var(--border)' }} />
+            <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, flexShrink: 0 }}>
+              {['us','ca','mx'].map(cc => (
+                <img key={cc} src={`https://flagcdn.com/w40/${cc}.png`} alt={cc}
+                  style={{ width: 34, height: 22, objectFit: 'cover', borderRadius: 4, border: '1px solid var(--border)' }} />
+              ))}
             </div>
           </div>
         </motion.div>
 
         {/* Tabs */}
         <div style={{ display: 'flex', gap: 6 }}>
-          {[{key:'groups',label:'Groups',Icon:Globe},{key:'fixtures',label:'Fixtures',Icon:Calendar}].map(t => {
-            const active = tab === t.key
+          {TABS.map(({ key, label, Icon }) => {
+            const active = tab === key
             return (
               <motion.button
-                key={t.key}
+                key={key}
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.97 }}
-                onClick={() => setTab(t.key)}
+                onClick={() => handleTab(key)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 7,
                   padding: '8px 18px', borderRadius: 12,
@@ -295,8 +396,8 @@ export default function WorldCup() {
                   transition: 'background 0.2s, color 0.2s',
                 }}
               >
-                <t.Icon size={14} />
-                {t.label}
+                <Icon size={14} />
+                {label}
               </motion.button>
             )
           })}
@@ -323,8 +424,8 @@ export default function WorldCup() {
           </motion.div>
         )}
 
-        {/* Groups */}
         <AnimatePresence mode="wait">
+          {/* Groups */}
           {tab === 'groups' && !error && (
             <motion.div
               key="groups"
@@ -353,18 +454,10 @@ export default function WorldCup() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              style={{
-                background: 'var(--surface)',
-                border: '1px solid var(--border)',
-                borderRadius: 16, overflow: 'hidden',
-              }}
+              style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden' }}
             >
               {loading && Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} style={{
-                  height: 52, padding: '0 16px',
-                  borderBottom: '1px solid var(--border)',
-                  display: 'flex', alignItems: 'center', gap: 12,
-                }}>
+                <div key={i} style={{ height: 52, padding: '0 16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 12 }}>
                   <div style={{ width: 40, height: 10, borderRadius: 4, background: 'var(--surface2)' }} />
                   <div style={{ flex: 1, height: 10, borderRadius: 4, background: 'var(--surface2)' }} />
                   <div style={{ width: 50, height: 24, borderRadius: 8, background: 'rgba(124,58,237,0.1)' }} />
@@ -378,6 +471,76 @@ export default function WorldCup() {
               )}
               {!loading && fixtures.map((m, i) => (
                 <FixtureRow key={m.fixture?.id ?? i} match={m} />
+              ))}
+            </motion.div>
+          )}
+
+          {/* Top Scorers */}
+          {tab === 'scorers' && (
+            <motion.div
+              key="scorers"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden' }}
+            >
+              <div style={{
+                padding: '12px 16px', borderBottom: '1px solid var(--border)',
+                background: 'linear-gradient(135deg,rgba(124,58,237,0.08),rgba(79,70,229,0.04))',
+                display: 'flex', alignItems: 'center', gap: 8,
+              }}>
+                <Target size={16} color="#7c3aed" />
+                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-1)' }}>Top Scorers — World Cup 2026</span>
+              </div>
+              {scorersLoading && Array.from({ length: 10 }).map((_, i) => <ScorerSkeleton key={i} />)}
+              {!scorersLoading && scorers.length === 0 && (
+                <div style={{ padding: '52px 0', textAlign: 'center' }}>
+                  <p style={{ color: 'var(--text-2)', fontSize: 13 }}>Маълумот дастрас нест</p>
+                </div>
+              )}
+              {!scorersLoading && scorers.map((player, i) => (
+                <ScorerRow
+                  key={player.player.id}
+                  player={player}
+                  rank={i + 1}
+                  value={player.statistics?.[0]?.goals?.total ?? 0}
+                  valueLabel="GOALS"
+                />
+              ))}
+            </motion.div>
+          )}
+
+          {/* Top Assists */}
+          {tab === 'assists' && (
+            <motion.div
+              key="assists"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden' }}
+            >
+              <div style={{
+                padding: '12px 16px', borderBottom: '1px solid var(--border)',
+                background: 'linear-gradient(135deg,rgba(124,58,237,0.08),rgba(79,70,229,0.04))',
+                display: 'flex', alignItems: 'center', gap: 8,
+              }}>
+                <Share2 size={16} color="#7c3aed" />
+                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-1)' }}>Top Assists — World Cup 2026</span>
+              </div>
+              {assistsLoading && Array.from({ length: 10 }).map((_, i) => <ScorerSkeleton key={i} />)}
+              {!assistsLoading && assists.length === 0 && (
+                <div style={{ padding: '52px 0', textAlign: 'center' }}>
+                  <p style={{ color: 'var(--text-2)', fontSize: 13 }}>Маълумот дастрас нест</p>
+                </div>
+              )}
+              {!assistsLoading && assists.map((player, i) => (
+                <ScorerRow
+                  key={player.player.id}
+                  player={player}
+                  rank={i + 1}
+                  value={player.statistics?.[0]?.goals?.assists ?? 0}
+                  valueLabel="ASSISTS"
+                />
               ))}
             </motion.div>
           )}
