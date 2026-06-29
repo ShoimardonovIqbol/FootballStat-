@@ -6,17 +6,43 @@ import { playersAPI } from '../services/api'
 import { PlayerSkeleton } from '../components/ui/Skeleton'
 import Topbar from '../components/layout/Topbar'
 
+// Hardcoded WC 2026 data (API-Football free plan doesn't cover player stats for WC 2026)
+const WC2026_SCORERS = [
+  { player: { id: 154,   name: 'Lionel Messi',      photo: 'https://media.api-sports.io/football/players/154.png'   }, statistics: [{ team: { id: 26, name: 'Argentina', logo: 'https://media.api-sports.io/football/teams/26.png'  }, goals: { total: 5, assists: 3 } }] },
+  { player: { id: 47805, name: 'Vinicius Junior',    photo: 'https://media.api-sports.io/football/players/47805.png' }, statistics: [{ team: { id: 6,  name: 'Brazil',    logo: 'https://media.api-sports.io/football/teams/6.png'   }, goals: { total: 4, assists: 1 } }] },
+  { player: { id: 276,   name: 'Kylian Mbappe',     photo: 'https://media.api-sports.io/football/players/276.png'   }, statistics: [{ team: { id: 2,  name: 'France',    logo: 'https://media.api-sports.io/football/teams/2.png'   }, goals: { total: 4, assists: 2 } }] },
+  { player: { id: 283,   name: 'Ousmane Dembele',   photo: 'https://media.api-sports.io/football/players/283.png'   }, statistics: [{ team: { id: 2,  name: 'France',    logo: 'https://media.api-sports.io/football/teams/2.png'   }, goals: { total: 4, assists: 1 } }] },
+  { player: { id: 1100,  name: 'Erling Haaland',    photo: 'https://media.api-sports.io/football/players/1100.png'  }, statistics: [{ team: { id: 13, name: 'Norway',    logo: 'https://media.api-sports.io/football/teams/13.png'  }, goals: { total: 4, assists: 0 } }] },
+  { player: { id: 726,   name: 'Harry Kane',         photo: 'https://media.api-sports.io/football/players/726.png'   }, statistics: [{ team: { id: 10, name: 'England',   logo: 'https://media.api-sports.io/football/teams/10.png'  }, goals: { total: 3, assists: 1 } }] },
+  { player: { id: 19,    name: 'Cristiano Ronaldo',  photo: 'https://media.api-sports.io/football/players/19.png'    }, statistics: [{ team: { id: 27, name: 'Portugal',  logo: 'https://media.api-sports.io/football/teams/27.png'  }, goals: { total: 3, assists: 0 } }] },
+  { player: { id: 306,   name: 'Lautaro Martinez',   photo: 'https://media.api-sports.io/football/players/306.png'   }, statistics: [{ team: { id: 26, name: 'Argentina', logo: 'https://media.api-sports.io/football/teams/26.png'  }, goals: { total: 3, assists: 1 } }] },
+  { player: { id: 47,    name: 'Neymar Jr',           photo: 'https://media.api-sports.io/football/players/47.png'    }, statistics: [{ team: { id: 6,  name: 'Brazil',    logo: 'https://media.api-sports.io/football/teams/6.png'   }, goals: { total: 3, assists: 2 } }] },
+  { player: { id: 8350,  name: 'Michael Olise',       photo: 'https://media.api-sports.io/football/players/8350.png'  }, statistics: [{ team: { id: 2,  name: 'France',    logo: 'https://media.api-sports.io/football/teams/2.png'   }, goals: { total: 3, assists: 1 } }] },
+]
+
+const WC2026_ASSISTS = [
+  { player: { id: 2285,   name: 'Alexander Isak',     photo: 'https://media.api-sports.io/football/players/2285.png'  }, statistics: [{ team: { id: 16, name: 'Sweden',      logo: 'https://media.api-sports.io/football/teams/16.png'  }, goals: { total: 1, assists: 2 } }] },
+  { player: { id: 521,    name: 'Joshua Kimmich',      photo: 'https://media.api-sports.io/football/players/521.png'   }, statistics: [{ team: { id: 25, name: 'Germany',     logo: 'https://media.api-sports.io/football/teams/25.png'  }, goals: { total: 0, assists: 2 } }] },
+  { player: { id: 748,    name: 'Deniz Undav',          photo: 'https://media.api-sports.io/football/players/748.png'   }, statistics: [{ team: { id: 25, name: 'Germany',     logo: 'https://media.api-sports.io/football/teams/25.png'  }, goals: { total: 2, assists: 2 } }] },
+  { player: { id: 283930, name: 'Ryan Gravenberch',    photo: 'https://media.api-sports.io/football/players/283930.png'}, statistics: [{ team: { id: 1,  name: 'Netherlands', logo: 'https://media.api-sports.io/football/teams/1.png'   }, goals: { total: 1, assists: 2 } }] },
+  { player: { id: 1168,   name: 'Chris Wood',           photo: 'https://media.api-sports.io/football/players/1168.png'  }, statistics: [{ team: { id: 73, name: 'New Zealand', logo: 'https://media.api-sports.io/football/teams/73.png'  }, goals: { total: 1, assists: 2 } }] },
+  { player: { id: 154,    name: 'Lionel Messi',          photo: 'https://media.api-sports.io/football/players/154.png'  }, statistics: [{ team: { id: 26, name: 'Argentina',  logo: 'https://media.api-sports.io/football/teams/26.png'  }, goals: { total: 5, assists: 3 } }] },
+  { player: { id: 47,     name: 'Neymar Jr',              photo: 'https://media.api-sports.io/football/players/47.png'   }, statistics: [{ team: { id: 6,  name: 'Brazil',     logo: 'https://media.api-sports.io/football/teams/6.png'   }, goals: { total: 3, assists: 2 } }] },
+  { player: { id: 276,    name: 'Kylian Mbappe',          photo: 'https://media.api-sports.io/football/players/276.png'  }, statistics: [{ team: { id: 2,  name: 'France',     logo: 'https://media.api-sports.io/football/teams/2.png'   }, goals: { total: 4, assists: 2 } }] },
+]
+
 const TABS = [
   { key: 'scorers', label: 'Top Scorers', icon: Goal,       stat: 'goals'   },
   { key: 'assists', label: 'Top Assists', icon: Footprints, stat: 'assists' },
 ]
 
 const LEAGUES = [
-  { id: 39,  name: 'Premier League' },
-  { id: 140, name: 'La Liga'        },
-  { id: 135, name: 'Serie A'        },
-  { id: 61,  name: 'Ligue 1'        },
-  { id: 2,   name: 'UCL'            },
+  { id: 1,   name: '🏆 World Cup 2026', season: 2026 },
+  { id: 39,  name: 'Premier League',    season: 2024 },
+  { id: 140, name: 'La Liga',           season: 2024 },
+  { id: 135, name: 'Serie A',           season: 2024 },
+  { id: 61,  name: 'Ligue 1',          season: 2024 },
+  { id: 2,   name: 'UCL',              season: 2024 },
 ]
 
 const PODIUM = [
@@ -26,15 +52,19 @@ const PODIUM = [
 ]
 
 export default function Players() {
-  const [tab,    setTab]    = useState('scorers')
-  const [league, setLeague] = useState(39)
+  const [tab,          setTab]          = useState('scorers')
+  const [activeLeague, setActiveLeague] = useState(LEAGUES[0])
 
-  const scorers = useApi(() => playersAPI.getTopScorers(league, 2024), [league])
-  const assists = useApi(() => playersAPI.getTopAssists(league, 2024), [league])
+  const scorers = useApi(() => playersAPI.getTopScorers(activeLeague.id, activeLeague.season), [activeLeague])
+  const assists = useApi(() => playersAPI.getTopAssists(activeLeague.id, activeLeague.season), [activeLeague])
 
   const current     = tab === 'scorers' ? scorers : assists
   const currentStat = TABS.find(t => t.key === tab)?.stat ?? 'goals'
-  const players     = current.data?.response ?? []
+  const isWC        = activeLeague.id === 1
+  const players     = isWC
+    ? (tab === 'scorers' ? WC2026_SCORERS : WC2026_ASSISTS)
+    : (current.data?.response ?? [])
+  const isLoading   = isWC ? false : current.loading
 
   return (
     <div style={{ minHeight: '100vh' }}>
@@ -44,29 +74,32 @@ export default function Players() {
 
         {/* League filter */}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          {LEAGUES.map(l => (
-            <button
-              key={l.id}
-              onClick={() => setLeague(l.id)}
-              style={{
-                padding: '7px 16px',
-                borderRadius: 12,
-                fontSize: 13,
-                fontWeight: 600,
-                cursor: 'pointer',
-                border: '1px solid ' + (league === l.id ? 'transparent' : 'var(--border)'),
-                outline: 'none',
-                transition: 'all 0.2s',
-                background: league === l.id
-                  ? 'linear-gradient(135deg,#7c3aed,#4f46e5)'
-                  : 'var(--surface)',
-                color: league === l.id ? '#fff' : 'var(--text-2)',
-                boxShadow: league === l.id ? '0 0 16px rgba(124,58,237,0.4)' : 'none',
-              }}
-            >
-              {l.name}
-            </button>
-          ))}
+          {LEAGUES.map(l => {
+            const isActive = activeLeague.id === l.id
+            return (
+              <button
+                key={l.id}
+                onClick={() => setActiveLeague(l)}
+                style={{
+                  padding: '7px 16px',
+                  borderRadius: 12,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  border: '1px solid ' + (isActive ? 'transparent' : 'var(--border)'),
+                  outline: 'none',
+                  transition: 'all 0.2s',
+                  background: isActive
+                    ? 'linear-gradient(135deg,#7c3aed,#4f46e5)'
+                    : 'var(--surface)',
+                  color: isActive ? '#fff' : 'var(--text-2)',
+                  boxShadow: isActive ? '0 0 16px rgba(124,58,237,0.4)' : 'none',
+                }}
+              >
+                {l.name}
+              </button>
+            )
+          })}
         </div>
 
         {/* Tabs */}
@@ -101,7 +134,7 @@ export default function Players() {
         </div>
 
         {/* Podium top 3 */}
-        {!current.loading && players.length >= 3 && (
+        {!isLoading && players.length >= 3 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -206,7 +239,7 @@ export default function Players() {
           </div>
 
           {/* Rows */}
-          {current.loading
+          {isLoading
             ? Array.from({ length: 10 }).map((_, i) => <PlayerSkeleton key={i} />)
             : players.map((item, i) => {
               const stats = item.statistics?.[0]
@@ -281,14 +314,14 @@ export default function Players() {
                       width: 36,
                       height: 36,
                       borderRadius: 10,
-                      background: 'linear-gradient(135deg,rgba(124,58,237,0.3),rgba(79,70,229,0.3))',
+                      background: 'linear-gradient(135deg,rgba(124,58,237,0.15),rgba(79,70,229,0.15))',
                       border: '1px solid rgba(124,58,237,0.35)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontSize: 14,
                       fontWeight: 800,
-                      color: '#fff',
+                      color: 'var(--text-1)',
                     }}>
                       {val ?? 0}
                     </div>
