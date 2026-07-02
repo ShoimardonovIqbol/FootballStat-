@@ -33,3 +33,6 @@ IMPORTANT_LEAGUES: dict[int, str] = {
 
 def get_api_key() -> str:
     return os.getenv("FOOTBALL_API_KEY", "").strip()
+
+def get_gemini_key() -> str:
+    return os.getenv("GEMINI_API_KEY", "").strip()

@@ -22,7 +22,7 @@ export default function PlayerCard({ item, rank, stat = 'goals' }) {
             gap: 12,
             padding: '10px 14px',
             cursor: 'pointer',
-            borderBottom: '1px solid rgba(124,58,237,0.08)',
+            borderBottom: '1px solid var(--border)',
             transition: 'background 0.15s',
           }}
           onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
@@ -47,11 +47,11 @@ export default function PlayerCard({ item, rank, stat = 'goals' }) {
               alt={player.name}
               style={{
                 width: 38, height: 38, borderRadius: '50%', objectFit: 'cover',
-                border: '2px solid rgba(124,58,237,0.4)',
+                border: '2px solid var(--border)',
                 display: 'block',
               }}
               onError={e => {
-                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(player.name)}&background=7c3aed&color=fff&size=38`
+                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(player.name)}&background=333336&color=fff&size=38`
               }}
             />
             {rank <= 3 && (
@@ -84,8 +84,8 @@ export default function PlayerCard({ item, rank, stat = 'goals' }) {
             width: 36, height: 36, borderRadius: 10, flexShrink: 0,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 14, fontWeight: 800, color: '#fff',
-            background: 'linear-gradient(135deg,rgba(124,58,237,0.3),rgba(79,70,229,0.3))',
-            border: '1px solid rgba(124,58,237,0.35)',
+            background: 'rgba(255,255,255,0.08)',
+            border: '1px solid var(--border)',
           }}>
             {value ?? 0}
           </div>

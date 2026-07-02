@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
 
-export default function StatBar({ label, home, away, homeColor = '#7c3aed', awayColor = '#4f46e5' }) {
+export default function StatBar({ label, home, away, homeColor = '#3fca7a', awayColor = '#0ea5e9' }) {
   const total = (home ?? 0) + (away ?? 0)
   const homePct = total === 0 ? 50 : Math.round(((home ?? 0) / total) * 100)
   const awayPct = 100 - homePct

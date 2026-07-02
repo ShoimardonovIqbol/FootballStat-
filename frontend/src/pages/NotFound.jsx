@@ -13,8 +13,7 @@ export default function NotFound() {
       >
         <div style={{
           fontSize: 96, fontWeight: 900, lineHeight: 1,
-          background: 'linear-gradient(135deg,#7c3aed,#a855f7)',
-          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+          color: 'var(--text-1)',
           marginBottom: 16,
         }}>
           404
@@ -32,7 +31,8 @@ export default function NotFound() {
               style={{
                 display: 'flex', alignItems: 'center', gap: 7,
                 padding: '10px 20px', borderRadius: 12,
-                background: 'linear-gradient(135deg,#7c3aed,#4f46e5)',
+                background: 'rgba(255,255,255,0.1)',
+                border: '1px solid rgba(255,255,255,0.2)',
                 color: '#fff', fontSize: 13, fontWeight: 700,
                 cursor: 'pointer',
               }}

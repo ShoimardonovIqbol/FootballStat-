@@ -57,7 +57,7 @@ export default function Leagues() {
             <motion.div key={item.id} variants={card}>
               <Link to={`/leagues/${item.id}`} style={{ textDecoration: 'none' }}>
                 <motion.div
-                  whileHover={{ scale: 1.03, y: -3, borderColor: 'rgba(124,58,237,0.5)' }}
+                  whileHover={{ scale: 1.03, y: -3, borderColor: 'rgba(255,255,255,0.2)' }}
                   whileTap={{ scale: 0.97 }}
                   transition={{ type: 'spring', stiffness: 400, damping: 22 }}
                   style={{
@@ -75,8 +75,8 @@ export default function Leagues() {
                   <div style={{
                     width: 52, height: 52, borderRadius: 12, flexShrink: 0,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: 'rgba(124,58,237,0.08)',
-                    border: '1px solid rgba(124,58,237,0.18)',
+                    background: 'var(--surface2)',
+                    border: '1px solid var(--border)',
                     padding: 9,
                   }}>
                     <img
@@ -112,7 +112,7 @@ export default function Leagues() {
                     animate={{ rotate: [0, 10, -10, 0] }}
                     transition={{ duration: 2.5, repeat: Infinity, delay: Math.random() * 2 }}
                   >
-                    <Trophy size={15} style={{ color: '#7c3aed' }} />
+                    <Trophy size={15} style={{ color: 'var(--text-3)' }} />
                   </motion.div>
                 </motion.div>
               </Link>

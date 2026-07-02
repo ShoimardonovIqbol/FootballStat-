@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { motion } from 'motion/react'
 import { Link } from 'react-router-dom'
-import { Shield, MapPin, Calendar } from 'lucide-react'
+import { Shield, MapPin, Calendar, Star } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { teamsAPI } from '../services/api'
+import { useFavorites } from '../context/FavoritesContext'
 import Topbar from '../components/layout/Topbar'
 
 const LEAGUES = [
@@ -15,21 +16,38 @@ const LEAGUES = [
 ]
 
 const BLOB_SETS = [
-  ['#7c3aed','#4f46e5','#a855f7'],
-  ['#0ea5e9','#6366f1','#3b82f6'],
-  ['#8b5cf6','#ec4899','#6366f1'],
-  ['#14b8a6','#7c3aed','#06b6d4'],
+  ['#1d4ed8','#0ea5e9','#2563eb'],
+  ['#0ea5e9','#14b8a6','#3b82f6'],
+  ['#0891b2','#ec4899','#6366f1'],
+  ['#14b8a6','#0ea5e9','#06b6d4'],
 ]
 
 function TeamCard({ team, venue, leagueName, index }) {
   const blobs = BLOB_SETS[index % BLOB_SETS.length]
+  const { isTeamFav, toggleTeam } = useFavorites()
+  const fav = isTeamFav(team.id)
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.035, type: 'spring', stiffness: 260, damping: 22 }}
       className="team-flip-wrap"
+      style={{ position: 'relative' }}
     >
+      <button
+        onClick={e => { e.preventDefault(); e.stopPropagation(); toggleTeam({ id: team.id, name: team.name, logo: team.logo }) }}
+        title={fav ? 'Remove from favorites' : 'Add to favorites'}
+        style={{
+          position: 'absolute', top: 8, right: 8, zIndex: 5,
+          width: 28, height: 28, borderRadius: '50%',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)',
+          border: '1px solid rgba(255,255,255,0.15)',
+          cursor: 'pointer',
+        }}
+      >
+        <Star size={14} color={fav ? '#f59e0b' : '#fff'} fill={fav ? '#f59e0b' : 'none'} />
+      </button>
       <Link to={`/teams/${team.id}`} style={{ display: 'block', width: '100%', height: '100%', textDecoration: 'none' }}>
         <div className="team-flip-inner">
 
@@ -39,8 +57,8 @@ function TeamCard({ team, venue, leagueName, index }) {
               <div style={{
                 width: 72, height: 72, borderRadius: 18,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: 'rgba(124,58,237,0.1)',
-                border: '1px solid rgba(124,58,237,0.3)',
+                background: 'var(--surface2)',
+                border: '1px solid var(--border)',
                 padding: 12,
               }}>
                 <img src={team.logo} alt={team.name}
@@ -50,7 +68,7 @@ function TeamCard({ team, venue, leagueName, index }) {
               <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-1)', textAlign: 'center', padding: '0 10px' }}>
                 {team.name}
               </p>
-              <p style={{ fontSize: 10, color: '#a78bfa', fontWeight: 600, letterSpacing: '0.05em' }}>
+              <p style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 600, letterSpacing: '0.05em' }}>
                 HOVER TO SEE MORE
               </p>
             </div>
@@ -91,9 +109,9 @@ function TeamCard({ team, venue, leagueName, index }) {
                 background: 'rgba(0,0,0,0.45)',
                 backdropFilter: 'blur(4px)',
                 padding: '3px 10px', borderRadius: 20,
-                fontSize: 10, fontWeight: 700, color: '#c4b5fd',
+                fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.75)',
                 width: 'fit-content',
-                border: '1px solid rgba(124,58,237,0.3)',
+                border: '1px solid rgba(255,255,255,0.15)',
               }}>
                 {leagueName}
               </span>
@@ -122,7 +140,7 @@ function TeamCard({ team, venue, leagueName, index }) {
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 5 }}>
                   <p style={{ fontSize: 12, fontWeight: 700, color: '#fff', flex: 1 }}>{team.name}</p>
-                  <svg fill="none" stroke="#7c3aed" strokeWidth="2" viewBox="0 0 24 24"
+                  <svg fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2" viewBox="0 0 24 24"
                     style={{ width: 14, height: 14, flexShrink: 0, marginLeft: 4 }}>
                     <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
@@ -136,9 +154,9 @@ function TeamCard({ team, venue, leagueName, index }) {
                   )}
                   {venue?.name && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 4, overflow: 'hidden' }}>
-                      <MapPin size={9} color="#a78bfa" />
+                      <MapPin size={9} color="rgba(255,255,255,0.4)" />
                       <span style={{
-                        fontSize: 9, color: '#a78bfa',
+                        fontSize: 9, color: 'rgba(255,255,255,0.5)',
                         overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                         maxWidth: 110,
                       }}>{venue.name}</span>
@@ -166,7 +184,7 @@ function SkeletonCard() {
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center', gap: 10,
       }}>
-        <div style={{ width: 64, height: 64, borderRadius: 16, background: 'rgba(124,58,237,0.08)' }} className="shimmer" />
+        <div style={{ width: 64, height: 64, borderRadius: 16, background: 'var(--surface2)' }} className="shimmer" />
         <div style={{ width: 90, height: 10, borderRadius: 5 }} className="shimmer" />
         <div style={{ width: 60, height: 8, borderRadius: 5 }} className="shimmer" />
       </div>
@@ -202,11 +220,9 @@ export default function Teams() {
                   cursor: 'pointer',
                   border: active ? 'none' : '1px solid var(--border)',
                   outline: 'none',
-                  background: active
-                    ? 'linear-gradient(135deg,#7c3aed,#4f46e5)'
-                    : 'var(--surface)',
+                  background: active ? 'rgba(255,255,255,0.1)' : 'var(--surface)',
                   color: active ? '#fff' : 'var(--text-2)',
-                  boxShadow: active ? '0 0 18px rgba(124,58,237,0.4)' : 'none',
+                  border: active ? '1px solid rgba(255,255,255,0.2)' : '1px solid var(--border)',
                   transition: 'background 0.2s, color 0.2s',
                 }}
               >

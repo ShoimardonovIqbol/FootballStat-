@@ -22,7 +22,7 @@ const FORM_COLOR = {
 }
 
 const zoneColor = rank => {
-  if (rank <= 4) return '#7c3aed'
+  if (rank <= 4) return '#3fca7a'
   if (rank <= 6) return '#f59e0b'
   return 'transparent'
 }
@@ -82,9 +82,9 @@ export default function Standings() {
                   padding: '8px 16px', borderRadius: 12,
                   fontSize: 13, fontWeight: 600,
                   cursor: 'pointer', border: active ? 'none' : '1px solid var(--border)',
-                  background: active ? 'linear-gradient(135deg,#7c3aed,#4f46e5)' : 'var(--surface)',
+                  background: active ? 'rgba(255,255,255,0.1)' : 'var(--surface)',
                   color: active ? '#fff' : 'var(--text-2)',
-                  boxShadow: active ? '0 4px 16px rgba(124,58,237,0.3)' : 'none',
+                  border: active ? '1px solid rgba(255,255,255,0.2)' : '1px solid var(--border)',
                   transition: 'all 0.18s',
                 }}
               >
@@ -110,8 +110,8 @@ export default function Standings() {
             style={{
               display: 'flex', alignItems: 'center', gap: 16,
               padding: '16px 24px', borderRadius: 16,
-              background: 'linear-gradient(135deg,rgba(124,58,237,0.08),rgba(79,70,229,0.04))',
-              border: '1px solid rgba(124,58,237,0.2)',
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
             }}
           >
             <div style={{
@@ -130,10 +130,10 @@ export default function Standings() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
                 <span style={{ fontSize: 12, color: 'var(--text-3)' }}>{current?.country}</span>
                 <span style={{
-                  fontSize: 11, fontWeight: 600, color: '#7c3aed',
-                  background: 'rgba(124,58,237,0.1)',
+                  fontSize: 11, fontWeight: 600, color: 'var(--text-2)',
+                  background: 'rgba(255,255,255,0.07)',
                   padding: '2px 10px', borderRadius: 999,
-                  border: '1px solid rgba(124,58,237,0.2)',
+                  border: '1px solid var(--border)',
                 }}>2024/25</span>
                 {!loading && table.length > 0 && (
                   <span style={{ fontSize: 11, color: 'var(--text-3)' }}>{table.length} clubs</span>
@@ -141,7 +141,7 @@ export default function Standings() {
               </div>
             </div>
             <div style={{ marginLeft: 'auto', display: 'flex', flexDirection: 'column', gap: 5, alignItems: 'flex-end' }}>
-              {[{ color: '#7c3aed', label: 'UCL' }, { color: '#f59e0b', label: 'Europa' }].map(z => (
+              {[{ color: '#3fca7a', label: 'UCL' }, { color: '#f59e0b', label: 'Europa' }].map(z => (
                 <div key={z.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <div style={{ width: 8, height: 8, borderRadius: 2, background: z.color }} />
                   <span style={{ fontSize: 11, color: 'var(--text-3)' }}>{z.label}</span>
@@ -184,7 +184,7 @@ export default function Standings() {
               <span style={{ textAlign: 'center' }}>GF</span>
               <span style={{ textAlign: 'center' }}>GD</span>
               <span style={{ textAlign: 'center' }}>Form</span>
-              <span style={{ textAlign: 'center', color: '#7c3aed' }}>Pts</span>
+              <span style={{ textAlign: 'center', color: 'var(--text-2)' }}>Pts</span>
             </div>
 
             {/* Loading */}
@@ -233,15 +233,15 @@ export default function Standings() {
                         padding: '10px 16px 10px 17px',
                         borderBottom: '1px solid var(--border)',
                         borderLeft: `3px solid ${zc}`,
-                        background: isPromo ? 'rgba(124,58,237,0.04)' : 'transparent',
+                        background: isPromo ? 'rgba(63,202,122,0.04)' : 'transparent',
                         transition: 'background 0.14s',
                         cursor: 'pointer',
                       }}
-                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(124,58,237,0.06)' }}
-                      onMouseLeave={e => { e.currentTarget.style.background = isPromo ? 'rgba(124,58,237,0.04)' : 'transparent' }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
+                      onMouseLeave={e => { e.currentTarget.style.background = isPromo ? 'rgba(63,202,122,0.04)' : 'transparent' }}
                     >
                       {/* Rank */}
-                      <span style={{ textAlign: 'center', fontSize: 12, fontWeight: 700, color: isPromo ? '#7c3aed' : 'var(--text-3)' }}>
+                      <span style={{ textAlign: 'center', fontSize: 12, fontWeight: 700, color: isPromo ? '#3fca7a' : 'var(--text-3)' }}>
                         {row.rank}
                       </span>
 
@@ -285,7 +285,7 @@ export default function Standings() {
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           fontSize: 13, fontWeight: 800,
                           color: isPromo ? '#fff' : 'var(--text-1)',
-                          background: isPromo ? 'linear-gradient(135deg,#7c3aed,#4f46e5)' : 'var(--surface2)',
+                          background: isPromo ? 'rgba(63,202,122,0.18)' : 'var(--surface2)',
                           border: isPromo ? 'none' : '1px solid var(--border)',
                         }}>
                           {row.points}

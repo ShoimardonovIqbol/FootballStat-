@@ -1,17 +1,17 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 
-const ThemeCtx = createContext({ dark: false, toggle: () => {} })
+const ThemeCtx = createContext({ light: false, toggle: () => {} })
 
 export function ThemeProvider({ children }) {
-  const [dark, setDark] = useState(() => localStorage.getItem('theme') === 'dark')
+  const [light, setLight] = useState(() => localStorage.getItem('theme') === 'light')
 
   useEffect(() => {
-    document.body.classList.toggle('dark', dark)
-    localStorage.setItem('theme', dark ? 'dark' : 'light')
-  }, [dark])
+    document.body.classList.toggle('light', light)
+    localStorage.setItem('theme', light ? 'light' : 'dark')
+  }, [light])
 
   return (
-    <ThemeCtx.Provider value={{ dark, toggle: () => setDark(d => !d) }}>
+    <ThemeCtx.Provider value={{ light, toggle: () => setLight(l => !l) }}>
       {children}
     </ThemeCtx.Provider>
   )

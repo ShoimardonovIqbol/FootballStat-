@@ -57,9 +57,9 @@ function StatRow({ item, rank, statKey }) {
       <img
         src={item?.player?.photo}
         alt={item?.player?.name}
-        style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(124,58,237,0.3)' }}
+        style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--border)' }}
         onError={e => {
-          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(item?.player?.name || '?')}&background=7c3aed&color=fff&size=34`
+          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(item?.player?.name || '?')}&background=333336&color=fff&size=34`
         }}
       />
 
@@ -84,10 +84,10 @@ function StatRow({ item, rank, statKey }) {
           fontSize: 15, fontWeight: 800, color: '#fff',
           background: statKey === 'redcards'
             ? 'rgba(244,63,94,0.25)'
-            : 'linear-gradient(135deg,rgba(124,58,237,0.3),rgba(79,70,229,0.3))',
+            : 'rgba(255,255,255,0.1)',
           border: statKey === 'redcards'
             ? '1px solid rgba(244,63,94,0.4)'
-            : '1px solid rgba(124,58,237,0.35)',
+            : '1px solid var(--border)',
         }}>
           {val ?? 0}
         </div>
@@ -157,18 +157,12 @@ export default function LeagueDetail() {
             gap: 20,
             padding: '20px 24px',
             borderRadius: 20,
-            background: 'linear-gradient(135deg, rgba(124,58,237,0.08), rgba(79,70,229,0.04))',
-            border: '1px solid rgba(124,58,237,0.2)',
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
             position: 'relative',
             overflow: 'hidden',
           }}
         >
-          <div style={{
-            position: 'absolute', top: -40, right: -40,
-            width: 200, height: 200, borderRadius: '50%',
-            background: '#7c3aed', opacity: 0.06, filter: 'blur(40px)',
-            pointerEvents: 'none',
-          }} />
 
           {/* Back button */}
           <Link to="/leagues" style={{ textDecoration: 'none', flexShrink: 0 }}>
@@ -180,7 +174,7 @@ export default function LeagueDetail() {
               cursor: 'pointer',
               transition: 'background 0.15s',
             }}
-            onMouseEnter={e => e.currentTarget.style.background = 'rgba(124,58,237,0.12)'}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
             onMouseLeave={e => e.currentTarget.style.background = 'var(--surface2)'}
             >
               <ArrowLeft size={16} style={{ color: 'var(--text-2)' }} />
@@ -219,8 +213,8 @@ export default function LeagueDetail() {
               )}
               <span style={{ fontSize: 13, color: 'var(--text-2)' }}>{meta.country}</span>
               <span style={{
-                fontSize: 11, fontWeight: 600, color: '#a78bfa',
-                background: 'rgba(124,58,237,0.12)',
+                fontSize: 11, fontWeight: 600, color: 'var(--text-2)',
+                background: 'rgba(255,255,255,0.07)',
                 padding: '2px 10px', borderRadius: 999,
               }}>
                 Season 2024/25
@@ -240,12 +234,9 @@ export default function LeagueDetail() {
                 padding: '9px 18px', borderRadius: 12,
                 fontSize: 13, fontWeight: 600, cursor: 'pointer',
                 outline: 'none',
-                background: tab === key
-                  ? 'linear-gradient(135deg,#7c3aed,#4f46e5)'
-                  : 'var(--surface)',
+                background: tab === key ? 'rgba(255,255,255,0.1)' : 'var(--surface)',
                 color: tab === key ? '#fff' : 'var(--text-2)',
-                border: '1px solid ' + (tab === key ? 'transparent' : 'var(--border)'),
-                boxShadow: tab === key ? '0 0 16px rgba(124,58,237,0.35)' : 'none',
+                border: '1px solid ' + (tab === key ? 'rgba(255,255,255,0.2)' : 'var(--border)'),
                 transition: 'all 0.2s',
               }}
             >

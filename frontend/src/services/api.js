@@ -14,6 +14,7 @@ export const matchesAPI = {
   getEvents: (id)         => api.get(`/matches/${id}/events`),
   getLineups: (id)        => api.get(`/matches/${id}/lineups`),
   getStatistics: (id)     => api.get(`/matches/${id}/statistics`),
+  getPlayers: (id)        => api.get(`/matches/${id}/players`),
   getList: (params)       => api.get('/matches', { params }),
   getH2H: (h2h, last=10) => api.get('/matches/h2h', { params: { h2h, last } }),
 }
@@ -46,4 +47,12 @@ export const playersAPI = {
 
 export const searchAPI = {
   search: (q, league) => api.get('/search', { params: { q, ...(league ? { league } : {}) } }),
+}
+
+export const newsAPI = {
+  getAll: () => api.get('/news'),
+}
+
+export const aiAPI = {
+  predict: (fixtureId) => api.get(`/ai/predict/${fixtureId}`),
 }

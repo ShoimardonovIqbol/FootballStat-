@@ -3,8 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from cache import cache
 from config import get_api_key
+from routers.ai import router as ai_router
 from routers.leagues import router as leagues_router
 from routers.matches import router as matches_router
+from routers.news import router as news_router
 from routers.players import router as players_router
 from routers.search import router as search_router
 from routers.standings import router as standings_router
@@ -30,12 +32,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(ai_router,       prefix="/api/ai")
 app.include_router(leagues_router, prefix="/api/leagues")
 app.include_router(standings_router, prefix="/api/standings")
 app.include_router(matches_router, prefix="/api/matches")
 app.include_router(teams_router, prefix="/api/teams")
 app.include_router(players_router, prefix="/api/players")
 app.include_router(search_router, prefix="/api/search")
+app.include_router(news_router, prefix="/api/news")
 
 
 @app.get("/", tags=["Health"], summary="API root")

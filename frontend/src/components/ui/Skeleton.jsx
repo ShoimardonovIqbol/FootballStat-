@@ -13,8 +13,8 @@ export function MatchCardSkeleton() {
   return (
     <div style={{
       padding: 14, borderRadius: 14,
-      background: 'rgba(16,16,42,0.7)',
-      border: '1px solid rgba(124,58,237,0.1)',
+      background: 'var(--surface)',
+      border: '1px solid var(--border)',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <Skeleton style={{ width: 28, height: 28, borderRadius: '50%' }} />

@@ -1,34 +1,36 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { Goal, Footprints } from 'lucide-react'
+import { Goal, Footprints, Star } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { playersAPI } from '../services/api'
 import { PlayerSkeleton } from '../components/ui/Skeleton'
+import { useFavorites } from '../context/FavoritesContext'
 import Topbar from '../components/layout/Topbar'
 
-// Hardcoded WC 2026 data (API-Football free plan doesn't cover player stats for WC 2026)
+// WC 2026 player data — corrected IDs + updated goals (Jun 29)
 const WC2026_SCORERS = [
-  { player: { id: 154,   name: 'Lionel Messi',      photo: 'https://media.api-sports.io/football/players/154.png'   }, statistics: [{ team: { id: 26, name: 'Argentina', logo: 'https://media.api-sports.io/football/teams/26.png'  }, goals: { total: 5, assists: 3 } }] },
-  { player: { id: 47805, name: 'Vinicius Junior',    photo: 'https://media.api-sports.io/football/players/47805.png' }, statistics: [{ team: { id: 6,  name: 'Brazil',    logo: 'https://media.api-sports.io/football/teams/6.png'   }, goals: { total: 4, assists: 1 } }] },
-  { player: { id: 276,   name: 'Kylian Mbappe',     photo: 'https://media.api-sports.io/football/players/276.png'   }, statistics: [{ team: { id: 2,  name: 'France',    logo: 'https://media.api-sports.io/football/teams/2.png'   }, goals: { total: 4, assists: 2 } }] },
-  { player: { id: 283,   name: 'Ousmane Dembele',   photo: 'https://media.api-sports.io/football/players/283.png'   }, statistics: [{ team: { id: 2,  name: 'France',    logo: 'https://media.api-sports.io/football/teams/2.png'   }, goals: { total: 4, assists: 1 } }] },
-  { player: { id: 1100,  name: 'Erling Haaland',    photo: 'https://media.api-sports.io/football/players/1100.png'  }, statistics: [{ team: { id: 13, name: 'Norway',    logo: 'https://media.api-sports.io/football/teams/13.png'  }, goals: { total: 4, assists: 0 } }] },
-  { player: { id: 726,   name: 'Harry Kane',         photo: 'https://media.api-sports.io/football/players/726.png'   }, statistics: [{ team: { id: 10, name: 'England',   logo: 'https://media.api-sports.io/football/teams/10.png'  }, goals: { total: 3, assists: 1 } }] },
-  { player: { id: 19,    name: 'Cristiano Ronaldo',  photo: 'https://media.api-sports.io/football/players/19.png'    }, statistics: [{ team: { id: 27, name: 'Portugal',  logo: 'https://media.api-sports.io/football/teams/27.png'  }, goals: { total: 3, assists: 0 } }] },
-  { player: { id: 306,   name: 'Lautaro Martinez',   photo: 'https://media.api-sports.io/football/players/306.png'   }, statistics: [{ team: { id: 26, name: 'Argentina', logo: 'https://media.api-sports.io/football/teams/26.png'  }, goals: { total: 3, assists: 1 } }] },
-  { player: { id: 47,    name: 'Neymar Jr',           photo: 'https://media.api-sports.io/football/players/47.png'    }, statistics: [{ team: { id: 6,  name: 'Brazil',    logo: 'https://media.api-sports.io/football/teams/6.png'   }, goals: { total: 3, assists: 2 } }] },
-  { player: { id: 8350,  name: 'Michael Olise',       photo: 'https://media.api-sports.io/football/players/8350.png'  }, statistics: [{ team: { id: 2,  name: 'France',    logo: 'https://media.api-sports.io/football/teams/2.png'   }, goals: { total: 3, assists: 1 } }] },
+  { player: { id: 154,  name: 'Lionel Messi',      photo: 'https://media.api-sports.io/football/players/154.png'  }, statistics: [{ team: { id: 26, name: 'Argentina', logo: 'https://media.api-sports.io/football/teams/26.png'  }, goals: { total: 6, assists: 3 } }] },
+  { player: { id: 762,  name: 'Vinicius Junior',   photo: 'https://media.api-sports.io/football/players/762.png'  }, statistics: [{ team: { id: 6,  name: 'Brazil',    logo: 'https://media.api-sports.io/football/teams/6.png'   }, goals: { total: 4, assists: 1 } }] },
+  { player: { id: 278,  name: 'Kylian Mbappe',     photo: 'https://media.api-sports.io/football/players/278.png'  }, statistics: [{ team: { id: 2,  name: 'France',    logo: 'https://media.api-sports.io/football/teams/2.png'   }, goals: { total: 4, assists: 2 } }] },
+  { player: { id: 283,  name: 'Ousmane Dembele',   photo: 'https://media.api-sports.io/football/players/283.png'  }, statistics: [{ team: { id: 2,  name: 'France',    logo: 'https://media.api-sports.io/football/teams/2.png'   }, goals: { total: 4, assists: 1 } }] },
+  { player: { id: 1100, name: 'Erling Haaland',    photo: 'https://media.api-sports.io/football/players/1100.png' }, statistics: [{ team: { id: 13, name: 'Norway',    logo: 'https://media.api-sports.io/football/teams/13.png'  }, goals: { total: 4, assists: 0 } }] },
+  { player: { id: 184,  name: 'Harry Kane',         photo: 'https://media.api-sports.io/football/players/184.png'  }, statistics: [{ team: { id: 10, name: 'England',   logo: 'https://media.api-sports.io/football/teams/10.png'  }, goals: { total: 3, assists: 1 } }] },
+  { player: { id: 36382,name: 'Cristiano Ronaldo',  photo: 'https://media.api-sports.io/football/players/36382.png'}, statistics: [{ team: { id: 27, name: 'Portugal',  logo: 'https://media.api-sports.io/football/teams/27.png'  }, goals: { total: 3, assists: 0 } }] },
+  { player: { id: 303,  name: 'Lautaro Martinez',   photo: 'https://media.api-sports.io/football/players/303.png'  }, statistics: [{ team: { id: 26, name: 'Argentina', logo: 'https://media.api-sports.io/football/teams/26.png'  }, goals: { total: 3, assists: 1 } }] },
+  { player: { id: 276,  name: 'Neymar Jr',           photo: 'https://media.api-sports.io/football/players/276.png'  }, statistics: [{ team: { id: 6,  name: 'Brazil',    logo: 'https://media.api-sports.io/football/teams/6.png'   }, goals: { total: 3, assists: 2 } }] },
+  { player: { id: 8350, name: 'Michael Olise',       photo: 'https://media.api-sports.io/football/players/8350.png' }, statistics: [{ team: { id: 2,  name: 'France',    logo: 'https://media.api-sports.io/football/teams/2.png'   }, goals: { total: 3, assists: 1 } }] },
 ]
 
 const WC2026_ASSISTS = [
-  { player: { id: 2285,   name: 'Alexander Isak',     photo: 'https://media.api-sports.io/football/players/2285.png'  }, statistics: [{ team: { id: 16, name: 'Sweden',      logo: 'https://media.api-sports.io/football/teams/16.png'  }, goals: { total: 1, assists: 2 } }] },
-  { player: { id: 521,    name: 'Joshua Kimmich',      photo: 'https://media.api-sports.io/football/players/521.png'   }, statistics: [{ team: { id: 25, name: 'Germany',     logo: 'https://media.api-sports.io/football/teams/25.png'  }, goals: { total: 0, assists: 2 } }] },
-  { player: { id: 748,    name: 'Deniz Undav',          photo: 'https://media.api-sports.io/football/players/748.png'   }, statistics: [{ team: { id: 25, name: 'Germany',     logo: 'https://media.api-sports.io/football/teams/25.png'  }, goals: { total: 2, assists: 2 } }] },
-  { player: { id: 283930, name: 'Ryan Gravenberch',    photo: 'https://media.api-sports.io/football/players/283930.png'}, statistics: [{ team: { id: 1,  name: 'Netherlands', logo: 'https://media.api-sports.io/football/teams/1.png'   }, goals: { total: 1, assists: 2 } }] },
-  { player: { id: 1168,   name: 'Chris Wood',           photo: 'https://media.api-sports.io/football/players/1168.png'  }, statistics: [{ team: { id: 73, name: 'New Zealand', logo: 'https://media.api-sports.io/football/teams/73.png'  }, goals: { total: 1, assists: 2 } }] },
-  { player: { id: 154,    name: 'Lionel Messi',          photo: 'https://media.api-sports.io/football/players/154.png'  }, statistics: [{ team: { id: 26, name: 'Argentina',  logo: 'https://media.api-sports.io/football/teams/26.png'  }, goals: { total: 5, assists: 3 } }] },
-  { player: { id: 47,     name: 'Neymar Jr',              photo: 'https://media.api-sports.io/football/players/47.png'   }, statistics: [{ team: { id: 6,  name: 'Brazil',     logo: 'https://media.api-sports.io/football/teams/6.png'   }, goals: { total: 3, assists: 2 } }] },
-  { player: { id: 276,    name: 'Kylian Mbappe',          photo: 'https://media.api-sports.io/football/players/276.png'  }, statistics: [{ team: { id: 2,  name: 'France',     logo: 'https://media.api-sports.io/football/teams/2.png'   }, goals: { total: 4, assists: 2 } }] },
+  { player: { id: 2864,  name: 'Alexander Isak',    photo: 'https://media.api-sports.io/football/players/2864.png'  }, statistics: [{ team: { id: 16,  name: 'Sweden',      logo: 'https://media.api-sports.io/football/teams/16.png'   }, goals: { total: 2, assists: 3 } }] },
+  { player: { id: 10135, name: 'Bruno Guimaraes',   photo: 'https://media.api-sports.io/football/players/10135.png' }, statistics: [{ team: { id: 6,   name: 'Brazil',      logo: 'https://media.api-sports.io/football/teams/6.png'    }, goals: { total: 1, assists: 3 } }] },
+  { player: { id: 19617, name: 'Michael Olise',     photo: 'https://media.api-sports.io/football/players/19617.png' }, statistics: [{ team: { id: 2,   name: 'France',      logo: 'https://media.api-sports.io/football/teams/2.png'    }, goals: { total: 3, assists: 3 } }] },
+  { player: { id: 744,   name: 'Brahim Diaz',       photo: 'https://media.api-sports.io/football/players/744.png'   }, statistics: [{ team: { id: 1,   name: 'Morocco',     logo: 'https://media.api-sports.io/football/teams/1.png'    }, goals: { total: 1, assists: 2 } }] },
+  { player: { id: 421,   name: 'Brel Embolo',       photo: 'https://media.api-sports.io/football/players/421.png'   }, statistics: [{ team: { id: 15,  name: 'Switzerland', logo: 'https://media.api-sports.io/football/teams/15.png'   }, goals: { total: 2, assists: 2 } }] },
+  { player: { id: 1460,  name: 'Bukayo Saka',       photo: 'https://media.api-sports.io/football/players/1460.png'  }, statistics: [{ team: { id: 10,  name: 'England',     logo: 'https://media.api-sports.io/football/teams/10.png'   }, goals: { total: 1, assists: 2 } }] },
+  { player: { id: 18979, name: 'Viktor Gyokeres',   photo: 'https://media.api-sports.io/football/players/18979.png' }, statistics: [{ team: { id: 16,  name: 'Sweden',      logo: 'https://media.api-sports.io/football/teams/16.png'   }, goals: { total: 2, assists: 2 } }] },
+  { player: { id: 226,   name: 'Denzel Dumfries',   photo: 'https://media.api-sports.io/football/players/226.png'   }, statistics: [{ team: { id: 33,  name: 'Netherlands', logo: 'https://media.api-sports.io/football/teams/33.png'   }, goals: { total: 1, assists: 2 } }] },
+  { player: { id: 502,   name: 'Joshua Kimmich',    photo: 'https://media.api-sports.io/football/players/502.png'   }, statistics: [{ team: { id: 25,  name: 'Germany',     logo: 'https://media.api-sports.io/football/teams/25.png'   }, goals: { total: 0, assists: 2 } }] },
 ]
 
 const TABS = [
@@ -46,14 +48,15 @@ const LEAGUES = [
 ]
 
 const PODIUM = [
-  { pos: 1, size: 80, barH: 52, medal: '🥇', border: '#f59e0b' },
-  { pos: 0, size: 64, barH: 36, medal: '🥈', border: '#94a3b8' },
-  { pos: 2, size: 64, barH: 32, medal: '🥉', border: '#b45309' },
+  { pos: 1, size: 72, barH: 40, medal: '🥈', border: '#94a3b8' },
+  { pos: 0, size: 92, barH: 60, medal: '🥇', border: '#f59e0b' },
+  { pos: 2, size: 72, barH: 32, medal: '🥉', border: '#b45309' },
 ]
 
 export default function Players() {
   const [tab,          setTab]          = useState('scorers')
   const [activeLeague, setActiveLeague] = useState(LEAGUES[0])
+  const { isPlayerFav, togglePlayer }   = useFavorites()
 
   const scorers = useApi(() => playersAPI.getTopScorers(activeLeague.id, activeLeague.season), [activeLeague])
   const assists = useApi(() => playersAPI.getTopAssists(activeLeague.id, activeLeague.season), [activeLeague])
@@ -90,10 +93,10 @@ export default function Players() {
                   outline: 'none',
                   transition: 'all 0.2s',
                   background: isActive
-                    ? 'linear-gradient(135deg,#7c3aed,#4f46e5)'
+                    ? 'rgba(255,255,255,0.1)'
                     : 'var(--surface)',
                   color: isActive ? '#fff' : 'var(--text-2)',
-                  boxShadow: isActive ? '0 0 16px rgba(124,58,237,0.4)' : 'none',
+                  border: '1px solid ' + (isActive ? 'rgba(255,255,255,0.2)' : 'var(--border)'),
                 }}
               >
                 {l.name}
@@ -115,11 +118,9 @@ export default function Players() {
                 fontSize: 13,
                 fontWeight: 600,
                 cursor: 'pointer',
-                border: '1px solid ' + (tab === key ? 'transparent' : 'var(--border)'),
+                border: '1px solid ' + (tab === key ? 'rgba(255,255,255,0.2)' : 'var(--border)'),
                 outline: 'none',
-                background: tab === key
-                  ? 'linear-gradient(135deg,#7c3aed,#4f46e5)'
-                  : 'var(--surface)',
+                background: tab === key ? 'rgba(255,255,255,0.1)' : 'var(--surface)',
                 color: tab === key ? '#fff' : 'var(--text-2)',
                 display: 'flex',
                 alignItems: 'center',
@@ -155,6 +156,7 @@ export default function Players() {
               const val    = currentStat === 'goals'
                 ? stats?.goals?.total
                 : stats?.goals?.assists
+              const fav    = item && isPlayerFav(item.player.id)
 
               return (
                 <motion.div
@@ -171,20 +173,37 @@ export default function Players() {
                   }}
                 >
                   <span style={{ fontSize: 24 }}>{medal}</span>
-                  <img
-                    src={item?.player?.photo}
-                    alt={item?.player?.name}
-                    style={{
-                      width: size,
-                      height: size,
-                      borderRadius: '50%',
-                      objectFit: 'cover',
-                      border: `3px solid ${border}`,
-                    }}
-                    onError={e => {
-                      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(item?.player?.name || '?')}&background=7c3aed&color=fff&size=${size}`
-                    }}
-                  />
+                  <div style={{ position: 'relative' }}>
+                    <img
+                      src={item?.player?.photo}
+                      alt={item?.player?.name}
+                      style={{
+                        width: size,
+                        height: size,
+                        borderRadius: '50%',
+                        objectFit: 'cover',
+                        border: `3px solid ${border}`,
+                      }}
+                      onError={e => {
+                        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(item?.player?.name || '?')}&background=333336&color=fff&size=${size}`
+                      }}
+                    />
+                    {item && (
+                      <button
+                        onClick={() => togglePlayer({ id: item.player.id, name: item.player.name, photo: item.player.photo, team: stats?.team?.name })}
+                        title={fav ? 'Remove from favorites' : 'Add to favorites'}
+                        style={{
+                          position: 'absolute', bottom: -2, right: -2,
+                          width: 24, height: 24, borderRadius: '50%',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          background: 'var(--surface)', border: '1px solid var(--border)',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <Star size={12} color={fav ? '#f59e0b' : 'var(--text-3)'} fill={fav ? '#f59e0b' : 'none'} />
+                      </button>
+                    )}
+                  </div>
                   <p style={{
                     fontSize: 12,
                     fontWeight: 700,
@@ -201,12 +220,11 @@ export default function Players() {
                     width: '100%',
                     minWidth: 90,
                     height: barH,
-                    background: 'linear-gradient(135deg,#7c3aed,#4f46e5)',
+                    background: 'rgba(255,255,255,0.1)',
                     borderRadius: '10px 10px 0 0',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 0 20px rgba(124,58,237,0.4)',
                   }}>
                     <span style={{ fontSize: 20, fontWeight: 800, color: '#fff' }}>{val ?? 0}</span>
                   </div>
@@ -226,12 +244,12 @@ export default function Players() {
           {/* Header */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '2rem 3rem 1fr 4rem',
+            gridTemplateColumns: '2rem 3rem 1fr 4rem 2.5rem',
             padding: '10px 16px',
             borderBottom: '1px solid var(--border)',
             background: 'var(--surface2)',
           }}>
-            {['#', '', 'Player', currentStat === 'goals' ? 'Goals' : 'Assists'].map((h, i) => (
+            {['#', '', 'Player', currentStat === 'goals' ? 'Goals' : 'Assists', ''].map((h, i) => (
               <span key={i} style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-3)', textAlign: i === 3 ? 'center' : 'left' }}>
                 {h}
               </span>
@@ -247,6 +265,7 @@ export default function Players() {
                 ? stats?.goals?.total
                 : stats?.goals?.assists
               const rankColors = ['#f59e0b', '#94a3b8', '#b45309']
+              const fav = isPlayerFav(item.player.id)
 
               return (
                 <motion.div
@@ -256,7 +275,7 @@ export default function Players() {
                   transition={{ delay: i * 0.03 }}
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: '2rem 3rem 1fr 4rem',
+                    gridTemplateColumns: '2rem 3rem 1fr 4rem 2.5rem',
                     alignItems: 'center',
                     padding: '10px 16px',
                     borderBottom: '1px solid var(--border)',
@@ -285,10 +304,10 @@ export default function Players() {
                         height: 36,
                         borderRadius: '50%',
                         objectFit: 'cover',
-                        border: '2px solid rgba(124,58,237,0.35)',
+                        border: '2px solid var(--border)',
                       }}
                       onError={e => {
-                        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(item.player.name)}&background=7c3aed&color=fff&size=36`
+                        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(item.player.name)}&background=333336&color=fff&size=36`
                       }}
                     />
                   </div>
@@ -314,8 +333,8 @@ export default function Players() {
                       width: 36,
                       height: 36,
                       borderRadius: 10,
-                      background: 'linear-gradient(135deg,rgba(124,58,237,0.15),rgba(79,70,229,0.15))',
-                      border: '1px solid rgba(124,58,237,0.35)',
+                      background: 'rgba(255,255,255,0.08)',
+                      border: '1px solid var(--border)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -326,6 +345,21 @@ export default function Players() {
                       {val ?? 0}
                     </div>
                   </div>
+
+                  {/* Favorite toggle */}
+                  <button
+                    onClick={e => {
+                      e.stopPropagation()
+                      togglePlayer({ id: item.player.id, name: item.player.name, photo: item.player.photo, team: stats?.team?.name })
+                    }}
+                    title={fav ? 'Remove from favorites' : 'Add to favorites'}
+                    style={{
+                      display: 'flex', justifyContent: 'center', alignItems: 'center',
+                      background: 'transparent', border: 'none', cursor: 'pointer', padding: 4,
+                    }}
+                  >
+                    <Star size={16} color={fav ? '#f59e0b' : 'var(--text-3)'} fill={fav ? '#f59e0b' : 'none'} />
+                  </button>
                 </motion.div>
               )
             })
